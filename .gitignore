@@ -1,1 +1,16 @@
 .claude/
+
+# Android / Gradle
+*.iml
+.gradle/
+/build
+/app/build/
+/captures
+.externalNativeBuild
+.cxx
+.kotlin/
+local.properties
+
+# IDE
+/.idea/
+.DS_Store

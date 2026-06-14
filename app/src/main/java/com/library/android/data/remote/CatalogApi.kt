@@ -17,6 +17,7 @@ interface CatalogApi {
         @Query("page_size") pageSize: Int = DEFAULT_PAGE_SIZE,
         @Query("shelf") shelf: String? = null,
         @Query("row") row: Int? = null,
+        @Query("isbn") isbn: String? = null,
     ): BookListDto
 
     /** `GET /books/{id}` — 404 surfaces as a Retrofit `HttpException` (handled in the repository). */

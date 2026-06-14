@@ -85,6 +85,12 @@ dependencies {
     implementation(libs.mlkit.code.scanner)
     implementation(libs.kotlinx.coroutines.play.services)
 
+    // FCM push (T-007). NOTE: the com.google.gms.google-services plugin is intentionally NOT
+    // applied — the app compiles + the gate passes without a real google-services.json. Real
+    // push delivery needs a Firebase project + that plugin/config at deployment (see README).
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

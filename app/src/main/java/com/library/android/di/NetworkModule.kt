@@ -5,6 +5,7 @@ import com.library.android.data.remote.AuthInterceptor
 import com.library.android.data.remote.CatalogApi
 import com.library.android.data.remote.ChatApi
 import com.library.android.data.remote.LoanApi
+import com.library.android.data.remote.NotificationApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,6 +71,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideChatApi(retrofit: Retrofit): ChatApi = retrofit.create(ChatApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationApi(retrofit: Retrofit): NotificationApi =
+        retrofit.create(NotificationApi::class.java)
 
     @Provides
     @Singleton

@@ -1,25 +1,30 @@
 package com.library.android.presentation.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val LightColors = lightColorScheme()
-private val DarkColors = darkColorScheme()
+// Stacks is a light, paper-toned design; a single light scheme mapped from the design tokens.
+private val StacksColorScheme = lightColorScheme(
+    primary = StacksColors.Pine,
+    onPrimary = StacksColors.OnAccent,
+    background = StacksColors.Bg,
+    onBackground = StacksColors.Ink,
+    surface = StacksColors.Surface,
+    onSurface = StacksColors.Ink,
+    outline = StacksColors.Line,
+)
 
 /**
- * App Material 3 theme. Kept minimal for M0 (default colour schemes); brand colours and
- * typography are filled in alongside the first feature screens.
+ * App Material 3 theme, mapped from the Stacks design tokens ([StacksColors]). Components that
+ * need exact design colours read [StacksColors] directly; the scheme covers Material defaults.
  */
 @Composable
 fun LibraryTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = if (useDarkTheme) DarkColors else LightColors,
+        colorScheme = StacksColorScheme,
         content = content,
     )
 }

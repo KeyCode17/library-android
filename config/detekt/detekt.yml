@@ -7,6 +7,14 @@
 build:
   maxIssues: 0   # the gate is "detekt clean" — any issue fails
 
+complexity:
+  active: true
+  # Composables legitimately take hoisted state + several event lambdas (state down, events
+  # up — the pattern the forbidden-patterns rule itself prescribes). Not an ADR-0005 concern.
+  LongParameterList:
+    active: true
+    ignoreAnnotated: ['Composable']
+
 naming:
   active: true
   # @Composable functions are intentionally PascalCase; compose-rules' ComposableNaming

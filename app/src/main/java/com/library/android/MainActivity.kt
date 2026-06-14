@@ -4,20 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.library.android.presentation.screens.home.HomeScreen
+import com.library.android.presentation.screens.catalog.CatalogScreen
 import com.library.android.presentation.theme.LibraryTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * Single-activity host. M0 has no injected dependencies, so it stays a plain
- * [ComponentActivity]; it becomes a Hilt `@AndroidEntryPoint` once a screen needs a ViewModel.
+ * Single-activity host. `@AndroidEntryPoint` lets composables resolve `@HiltViewModel`s
+ * (e.g. `CatalogViewModel`) via `hiltViewModel()`.
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LibraryTheme {
-                HomeScreen()
+                CatalogScreen()
             }
         }
     }

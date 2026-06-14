@@ -232,10 +232,10 @@ private data class NavDestination(
  * (M1) and Chat (M3) arrive in later milestones, so they stay visual only.
  */
 @Composable
-fun StacksBottomNav(onProfileClick: () -> Unit) {
+fun StacksBottomNav(onProfileClick: () -> Unit, onBorrowedClick: () -> Unit) {
     val destinations = listOf(
         NavDestination("Catalog", StacksIcons.NavCatalog, selected = true, onClick = {}),
-        NavDestination("Borrowed", StacksIcons.NavBorrowed, selected = false, onClick = {}),
+        NavDestination("Borrowed", StacksIcons.NavBorrowed, selected = false, onClick = onBorrowedClick),
         NavDestination("Chat", StacksIcons.NavChat, selected = false, onClick = {}),
         NavDestination("Profile", StacksIcons.NavProfile, selected = false, onClick = onProfileClick),
     )

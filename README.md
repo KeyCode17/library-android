@@ -18,6 +18,13 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+- **Chat (group, real-time):** room history over REST (`GET /chat/rooms/{room}/messages`) plus a
+  live **WebSocket** (`/ws/chat?room=&token=<jwt>`, OkHttp) behind a `ChatSocket` port (real
+  adapter for prod; fake in tests). Room selector (ask-a-librarian / book-category / event);
+  send `ChatSend`, append incoming `ChatMessage`. Auth required (gated "Chat" tab).
+  - ⚠️ **The chat screen is a clean default and needs a design pass** — no chat design file.
+  - The real OkHttp socket adapter is exercised by a **CI-only instrumented test**; the JVM gate
+    uses the fake socket.
 - **Recommendations (on-device):** ranks catalog candidates with the Rust recommender running
   **on-device via the UniFFI binding** (NOT the REST `/recommend` path). Behind a `Recommender`
   port (UniFFI adapter for prod; pure-Kotlin fake in tests).

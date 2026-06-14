@@ -2,9 +2,11 @@ package com.library.android.di
 
 import com.library.android.data.remote.AuthRemoteRepository
 import com.library.android.data.remote.CatalogRemoteRepository
+import com.library.android.data.remote.ChatRemoteRepository
 import com.library.android.data.remote.LoanRemoteRepository
 import com.library.android.domain.repo.AuthRepository
 import com.library.android.domain.repo.CatalogRepository
+import com.library.android.domain.repo.ChatRepository
 import com.library.android.domain.repo.LoanRepository
 import dagger.Binds
 import dagger.Module
@@ -27,4 +29,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindLoanRepository(impl: LoanRemoteRepository): LoanRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindChatRepository(impl: ChatRemoteRepository): ChatRepository
 }

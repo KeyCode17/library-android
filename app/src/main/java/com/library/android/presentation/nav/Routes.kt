@@ -10,6 +10,7 @@ object Routes {
     const val PROFILE = "profile"
     const val LENDING = "lending"
     const val RECOMMENDATIONS = "recommendations"
+    const val CHAT = "chat-room"
 
     fun bookDetail(id: String): String = "book/$id"
 }

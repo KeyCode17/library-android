@@ -3,6 +3,7 @@ package com.library.android.di
 import com.library.android.data.remote.AuthApi
 import com.library.android.data.remote.AuthInterceptor
 import com.library.android.data.remote.CatalogApi
+import com.library.android.data.remote.ChatApi
 import com.library.android.data.remote.LoanApi
 import dagger.Module
 import dagger.Provides
@@ -65,6 +66,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoanApi(retrofit: Retrofit): LoanApi = retrofit.create(LoanApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideChatApi(retrofit: Retrofit): ChatApi = retrofit.create(ChatApi::class.java)
 
     @Provides
     @Singleton

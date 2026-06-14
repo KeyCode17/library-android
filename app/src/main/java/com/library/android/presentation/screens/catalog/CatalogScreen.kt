@@ -40,6 +40,7 @@ fun CatalogScreen(
     onProfileClick: () -> Unit,
     onBorrowedClick: () -> Unit,
     onRecommendationsClick: () -> Unit,
+    onChatClick: () -> Unit,
     viewModel: CatalogViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -54,6 +55,7 @@ fun CatalogScreen(
         onProfileClick = onProfileClick,
         onBorrowedClick = onBorrowedClick,
         onRecommendationsClick = onRecommendationsClick,
+        onChatClick = onChatClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -70,6 +72,7 @@ fun CatalogContent(
     onProfileClick: () -> Unit = {},
     onBorrowedClick: () -> Unit = {},
     onRecommendationsClick: () -> Unit = {},
+    onChatClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
@@ -85,7 +88,11 @@ fun CatalogContent(
                 is CatalogUiState.Error -> ErrorState(state.message, onRetry)
             }
         }
-        StacksBottomNav(onProfileClick = onProfileClick, onBorrowedClick = onBorrowedClick)
+        StacksBottomNav(
+            onProfileClick = onProfileClick,
+            onBorrowedClick = onBorrowedClick,
+            onChatClick = onChatClick,
+        )
     }
 }
 

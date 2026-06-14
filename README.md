@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.5.0 · **Status:** v0.5.0 — Recommender (pure crate + /recommend; android on-device UniFFI binding).
+**Version:** 0.6.0 · **Status:** v0.6.0 — Chat: group chat over WebSocket.
 
 ## What's built
 

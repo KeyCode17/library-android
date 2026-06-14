@@ -40,6 +40,9 @@ object StacksIcons {
             "2.5 0 1112 6.5a2.5 2.5 0 010 5z",
     )
 
+    // back chevron for the detail app bar ("‹ Catalog")
+    val NavBack: ImageVector = strokeIcon("NavBack", "M15 18l-6-6 6-6", strokeWidth = 2f)
+
     // bottomnav icons (stroke-width 1.8)
     val NavCatalog: ImageVector =
         strokeIcon("NavCatalog", "M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z", 1.8f)

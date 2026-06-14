@@ -35,3 +35,10 @@ data class BookListDto(
     val data: List<BookDto>,
     val pagination: PaginationDto,
 )
+
+/** Flat error body returned by 4xx/5xx responses (contract: components.schemas.Error). */
+@Serializable
+data class ErrorDto(
+    val code: String,     // stable machine-readable code, e.g. "not_found"
+    val message: String,  // human-readable explanation
+)

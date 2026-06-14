@@ -1,25 +1,28 @@
-package com.library.android.presentation.screens.catalog
+package com.library.android.presentation.screens.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,86 +35,108 @@ import com.library.android.domain.model.Book
 import com.library.android.presentation.theme.LibraryTheme
 import com.library.android.presentation.theme.StacksColors
 import com.library.android.presentation.theme.StacksType
+import com.library.android.presentation.ui.StacksIcons
 
-/** Stateful catalog screen — wires the ViewModel and delegates to the stateless [CatalogContent]. */
+/** Stateful book-detail screen — wires the ViewModel, delegates to stateless [BookDetailContent]. */
 @Composable
-fun CatalogScreen(
-    onBookClick: (String) -> Unit,
-    viewModel: CatalogViewModel = hiltViewModel(),
+fun BookDetailScreen(
+    onBack: () -> Unit,
+    viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val filter by viewModel.filter.collectAsStateWithLifecycle()
-    CatalogContent(
+    BookDetailContent(
         state = state,
-        filter = filter,
-        onApplyFinder = viewModel::applyFinder,
-        onClearFinder = viewModel::clearFinder,
+        onBack = onBack,
         onRetry = viewModel::load,
-        onBookClick = onBookClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
 
-/** Pure, previewable catalog UI: chrome + finder + the current [CatalogUiState]. */
+/** Pure, previewable detail UI: back app bar + the current [BookDetailUiState]. */
 @Composable
-fun CatalogContent(
-    state: CatalogUiState,
-    filter: CatalogFilter = CatalogFilter(),
-    onApplyFinder: (String?, Int?) -> Unit = { _, _ -> },
-    onClearFinder: () -> Unit = {},
+fun BookDetailContent(
+    state: BookDetailUiState,
+    onBack: () -> Unit = {},
     onRetry: () -> Unit = {},
-    onBookClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
-        StacksAppBar()
-        CatalogSearchBar()
-        CatalogFinderBar(filter = filter, onApply = onApplyFinder, onClear = onClearFinder)
-        FilterChipsRow()
+        DetailAppBar(onBack)
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when (state) {
-                CatalogUiState.Loading -> LoadingState()
-                is CatalogUiState.Content -> BookList(state.books, onBookClick)
-                CatalogUiState.Empty -> EmptyState()
-                is CatalogUiState.Error -> ErrorState(state.message, onRetry)
+                BookDetailUiState.Loading -> DetailLoading()
+                is BookDetailUiState.Content -> BookDetail(state.book)
+                BookDetailUiState.NotFound ->
+                    DetailMessage("Book not found", "We couldn't find that book.")
+                is BookDetailUiState.Error -> DetailError(state.message, onRetry)
             }
         }
-        StacksBottomNav()
     }
 }
 
+/** .appbar (detail variant): "‹ Catalog" back affordance + avatar. */
 @Composable
-private fun BookList(books: List<Book>, onBookClick: (String) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+private fun DetailAppBar(onBack: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, top = 6.dp, end = 18.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        items(books, key = { it.id }) { book ->
-            BookRow(book = book, onClick = { onBookClick(book.id) })
+        Row(
+            modifier = Modifier.clickable(onClick = onBack).padding(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Icon(
+                imageVector = StacksIcons.NavBack,
+                contentDescription = "Back to catalog",
+                tint = StacksColors.Pine,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                text = "Catalog",
+                color = StacksColors.Pine,
+                fontFamily = StacksType.Body,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+            )
+        }
+        Box(Modifier.weight(1f))
+        Box(
+            modifier = Modifier.size(32.dp).clip(CircleShape).background(StacksColors.Pine),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "DK",
+                color = StacksColors.OnAccent,
+                fontFamily = StacksType.Body,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+            )
         }
     }
 }
 
 @Composable
-private fun LoadingState() {
+private fun DetailLoading() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             color = StacksColors.Pine,
-            modifier = Modifier.testTag(CatalogTestTags.LOADING),
+            modifier = Modifier.testTag(BookDetailTestTags.LOADING),
         )
     }
 }
 
 @Composable
-private fun EmptyState() {
+private fun DetailMessage(title: String, body: String) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = "Nothing on the shelves yet",
+                text = title,
                 color = StacksColors.Ink,
                 fontFamily = StacksType.Display,
                 fontWeight = FontWeight.SemiBold,
@@ -119,7 +144,7 @@ private fun EmptyState() {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Try a different shelf or row, or check back soon.",
+                text = body,
                 color = StacksColors.Muted,
                 fontFamily = StacksType.Body,
                 fontSize = 14.sp,
@@ -130,7 +155,7 @@ private fun EmptyState() {
 }
 
 @Composable
-private fun ErrorState(message: String, onRetry: () -> Unit) {
+private fun DetailError(message: String, onRetry: () -> Unit) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,30 +182,23 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
     }
 }
 
-/** Sample catalog used by previews and shared with UI tests. */
-internal val sampleBooks = listOf(
-    Book("1", "The Left Hand of Darkness", "Ursula K. Le Guin", "9780441478125", "R12", 3, true),
-    Book("2", "Pale Fire", "Vladimir Nabokov", "9780679723424", "R08", 1, false),
-    Book("3", "Gödel, Escher, Bach", "Douglas Hofstadter", "9780465026562", "R21", 5, true),
-    Book("4", "The Order of Time", "Carlo Rovelli", "9780735216105", "R19", 2, true),
-    Book("5", "Wayfinding", "M. R. O'Connor", "9781250096968", "R04", 6, false),
-    Book("6", "A Pattern Language", "Christopher Alexander", "9780195019193", "R31", 1, true),
-)
+private val sampleBook =
+    Book("1", "The Left Hand of Darkness", "Ursula K. Le Guin", "9780441478125", "R12", 3, true)
 
 @Preview(showBackground = true, heightDp = 844, widthDp = 390)
 @Composable
-private fun CatalogContentPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Content(sampleBooks)) }
+private fun BookDetailContentPreview() {
+    LibraryTheme { BookDetailContent(BookDetailUiState.Content(sampleBook)) }
 }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
-private fun CatalogEmptyPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Empty) }
+private fun BookDetailNotFoundPreview() {
+    LibraryTheme { BookDetailContent(BookDetailUiState.NotFound) }
 }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
-private fun CatalogErrorPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Error("Couldn't load the catalog")) }
+private fun BookDetailErrorPreview() {
+    LibraryTheme { BookDetailContent(BookDetailUiState.Error("Couldn't load this book")) }
 }

@@ -24,6 +24,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -110,7 +112,8 @@ private fun AccessCard(state: AccessCardUiState.Ready) {
 
 @Composable
 private fun QrImage(matrix: QrMatrix, modifier: Modifier) {
-    Canvas(modifier) {
+    // The QR is meaningful content (not decorative), so it carries a TalkBack description.
+    Canvas(modifier.semantics { contentDescription = "Library access card QR code" }) {
         val module = size.minDimension / matrix.size
         for (y in 0 until matrix.size) {
             for (x in 0 until matrix.size) {

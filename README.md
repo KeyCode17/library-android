@@ -57,9 +57,8 @@ Lending, chat, recommender, etc. arrive in later milestones (see
   an **Approve** action (hidden for members; server enforces regardless). **Borrow-by-scan**
   (ML Kit code scanner) behind a `BarcodeScanner` port (faked in tests).
   - ⚠️ **The lending screen is a clean default and needs a design pass** — no lending design file.
-  - The scanner reads an **ISBN**, but `BorrowRequest` needs a `book_id` and the contract has no
-    ISBN lookup, so the book is resolved **client-side** from the catalog first page. Flagged as
-    a contract gap (an ISBN/borrow-by-isbn endpoint would remove the client-side scan).
+  - The scanner reads an **ISBN**, resolved to a book **server-side** via the catalog finder
+    (`GET /books?isbn=`), then borrowed. (Earlier client-side first-page matching was replaced.)
   - Wiring the catalog-detail **Borrow** button is a follow-up — borrow is via the Borrowed tab.
 - **Auth (IAM):** register / login / logout over REST; JWT in `EncryptedSharedPreferences`
   attached as `Authorization: Bearer` via an OkHttp interceptor; a gated Profile screen reads
@@ -76,6 +75,13 @@ Lending, chat, recommender, etc. arrive in later milestones (see
   `StateFlow<UiState>`; stateful `XxxScreen` + stateless, previewable `XxxContent`
 - **Toolchain (ADR-0001):** AGP 9.1, Gradle 9.1, JDK 17 toolchain, Kotlin 2.2.10,
   compileSdk/targetSdk 36, minSdk 24, no `kotlin-android` plugin (AGP 9 built-in Kotlin)
+- **Hardening (0.9.0):** accessibility pass (icon/QR content descriptions, ≥48dp touch targets
+  on custom affordances), Compose perf (`@Immutable` UiStates for stability, keyed lazy lists,
+  off-main I/O), and broadened Compose/ViewModel tests incl. a11y assertions.
+
+> **Design note:** most screens (auth, lending, recommendations, chat, reminders, access card,
+> WiFi) are clean defaults with no design file and still need a design pass. Catalog + detail
+> follow `docs/designs/`.
 
 ## Requirements
 

@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,7 @@ fun StacksAppBar(onRecommendationsClick: () -> Unit = {}) {
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
             modifier = Modifier
+                .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
                 .clickable(onClick = onRecommendationsClick)
                 .padding(horizontal = 8.dp, vertical = 4.dp),
         )

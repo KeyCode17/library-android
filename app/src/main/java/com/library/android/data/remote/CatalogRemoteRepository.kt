@@ -26,6 +26,10 @@ class CatalogRemoteRepository @Inject constructor(
             runCatching { api.listBooks(shelf = shelf, row = row).data.map { it.toDomain() } }
         }
 
+    override suspend fun findByIsbn(isbn: String): Result<Book?> = withContext(ioDispatcher) {
+        runCatching { api.listBooks(isbn = isbn).data.firstOrNull()?.toDomain() }
+    }
+
     override suspend fun getBook(id: String): BookLookup = withContext(ioDispatcher) {
         try {
             BookLookup.Found(api.getBook(id).toDomain())

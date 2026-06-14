@@ -15,4 +15,10 @@ interface CatalogRepository {
 
     /** Fetches a single book; distinguishes 404 (NotFound) from other failures via [BookLookup]. */
     suspend fun getBook(id: String): BookLookup
+
+    /**
+     * Resolves a scanned ISBN to a book via the server finder (`GET /books?isbn=`); returns
+     * `null` when no book matches. Server-side resolution (not a client-side page scan).
+     */
+    suspend fun findByIsbn(isbn: String): Result<Book?>
 }

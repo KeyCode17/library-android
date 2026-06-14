@@ -7,20 +7,20 @@ import com.library.android.domain.repo.LoanRepository
 import javax.inject.Inject
 
 /**
- * Borrows the catalog book matching a scanned barcode (ISBN). The contract has no ISBN lookup,
- * so the book is resolved client-side from the catalog before calling borrow — see the README
- * note about this gap.
+ * Borrows the book matching a scanned barcode (ISBN). Resolves the ISBN to a book **server-side**
+ * via `GET /books?isbn=` (the catalog finder), then borrows it — no client-side page scanning.
  */
 class BorrowByBarcodeUseCase @Inject constructor(
     private val catalogRepository: CatalogRepository,
     private val loanRepository: LoanRepository,
 ) {
     suspend operator fun invoke(isbn: String): Result<Loan> =
-        catalogRepository.getBooks().fold(
-            onSuccess = { books ->
-                when (val match = books.firstOrNull { it.isbn == isbn }) {
-                    null -> Result.failure(LoanException("That book isn't in the catalog"))
-                    else -> loanRepository.borrow(match.id)
+        catalogRepository.findByIsbn(isbn).fold(
+            onSuccess = { book ->
+                if (book == null) {
+                    Result.failure(LoanException("That book isn't in the catalog"))
+                } else {
+                    loanRepository.borrow(book.id)
                 }
             },
             onFailure = { Result.failure(it) },

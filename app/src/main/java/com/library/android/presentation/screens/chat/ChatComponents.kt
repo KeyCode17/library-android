@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +56,7 @@ private fun RoomChip(label: String, selected: Boolean, onClick: () -> Unit) {
         fontWeight = FontWeight.Medium,
         fontSize = 13.sp,
         modifier = Modifier
+            .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
             .clip(shape)
             .background(if (selected) StacksColors.Pine else StacksColors.Surface)
             .border(1.dp, if (selected) StacksColors.Pine else StacksColors.Line, shape)

@@ -1,0 +1,49 @@
+# detekt config — consistent with .claude/rules/kotlin-forbidden-pattern.md.
+# buildUponDefaultConfig = true, so this only overrides the defaults.
+# The compose-rules (io.nlopez.compose.rules) ruleset is on the classpath via
+# detektPlugins and active by its own defaults (ViewModelForwarding, MutableParams,
+# ComposableNaming, ModifierMissing, etc.).
+
+build:
+  maxIssues: 0   # the gate is "detekt clean" — any issue fails
+
+naming:
+  active: true
+  # @Composable functions are intentionally PascalCase; compose-rules' ComposableNaming
+  # governs them instead of detekt's camelCase FunctionNaming.
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']
+
+coroutines:
+  active: true
+  # bans GlobalScope (kotlin-forbidden-pattern #2)
+  GlobalCoroutineUsage:
+    active: true
+
+potential-bugs:
+  active: true
+  # bans !! force-unwrap (kotlin-forbidden-pattern #3)
+  UnsafeCallOnNullableType:
+    active: true
+
+exceptions:
+  active: true
+  # no swallowed / over-broad catches (kotlin-forbidden-pattern)
+  SwallowedException:
+    active: true
+  TooGenericExceptionCaught:
+    active: true
+
+style:
+  active: true
+  # @Preview composables are tooling entry points, not dead code.
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated: ['Preview', 'Composable']
+  # bans runBlocking on the main thread (kotlin-forbidden-pattern #7)
+  ForbiddenMethodCall:
+    active: true
+    methods:
+      - reason: 'runBlocking blocks the main thread — use a scoped suspend launch instead'
+        value: 'kotlinx.coroutines.runBlocking'

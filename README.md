@@ -18,6 +18,15 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+- **Lending:** borrow / return / my-loans (`GET /loans`) over REST with the bearer token; a
+  gated "Borrowed" screen shows status + due date; staff (librarian/admin, from `/auth/me`) see
+  an **Approve** action (hidden for members; server enforces regardless). **Borrow-by-scan**
+  (ML Kit code scanner) behind a `BarcodeScanner` port (faked in tests).
+  - ⚠️ **The lending screen is a clean default and needs a design pass** — no lending design file.
+  - The scanner reads an **ISBN**, but `BorrowRequest` needs a `book_id` and the contract has no
+    ISBN lookup, so the book is resolved **client-side** from the catalog first page. Flagged as
+    a contract gap (an ISBN/borrow-by-isbn endpoint would remove the client-side scan).
+  - Wiring the catalog-detail **Borrow** button is a follow-up — borrow is via the Borrowed tab.
 - **Auth (IAM):** register / login / logout over REST; JWT in `EncryptedSharedPreferences`
   attached as `Authorization: Bearer` via an OkHttp interceptor; a gated Profile screen reads
   `/auth/me`. Catalog stays **public**.

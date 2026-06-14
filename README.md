@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.8.0 · **Status:** v0.8.0 — Device features: QR access card + WiFi provisioning.
+**Version:** 0.9.0 · **Status:** v0.9.0 — Hardening: a11y/perf, expanded tests, server-side ISBN scan (deployment: FCM needs a real Firebase config).
 
 ## What's built
 

@@ -35,30 +35,43 @@ import com.library.android.presentation.theme.StacksType
 
 /** Stateful catalog screen — wires the ViewModel and delegates to the stateless [CatalogContent]. */
 @Composable
-fun CatalogScreen(viewModel: CatalogViewModel = hiltViewModel()) {
+fun CatalogScreen(
+    onBookClick: (String) -> Unit,
+    viewModel: CatalogViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val filter by viewModel.filter.collectAsStateWithLifecycle()
     CatalogContent(
         state = state,
+        filter = filter,
+        onApplyFinder = viewModel::applyFinder,
+        onClearFinder = viewModel::clearFinder,
         onRetry = viewModel::load,
+        onBookClick = onBookClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
 
-/** Pure, previewable catalog UI: chrome + the current [CatalogUiState]. */
+/** Pure, previewable catalog UI: chrome + finder + the current [CatalogUiState]. */
 @Composable
 fun CatalogContent(
     state: CatalogUiState,
-    onRetry: () -> Unit,
+    filter: CatalogFilter = CatalogFilter(),
+    onApplyFinder: (String?, Int?) -> Unit = { _, _ -> },
+    onClearFinder: () -> Unit = {},
+    onRetry: () -> Unit = {},
+    onBookClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
         StacksAppBar()
         CatalogSearchBar()
+        CatalogFinderBar(filter = filter, onApply = onApplyFinder, onClear = onClearFinder)
         FilterChipsRow()
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when (state) {
                 CatalogUiState.Loading -> LoadingState()
-                is CatalogUiState.Content -> BookList(state.books)
+                is CatalogUiState.Content -> BookList(state.books, onBookClick)
                 CatalogUiState.Empty -> EmptyState()
                 is CatalogUiState.Error -> ErrorState(state.message, onRetry)
             }
@@ -68,13 +81,15 @@ fun CatalogContent(
 }
 
 @Composable
-private fun BookList(books: List<Book>) {
+private fun BookList(books: List<Book>, onBookClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(books, key = { it.id }) { book -> BookRow(book) }
+        items(books, key = { it.id }) { book ->
+            BookRow(book = book, onClick = { onBookClick(book.id) })
+        }
     }
 }
 
@@ -104,7 +119,7 @@ private fun EmptyState() {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "New books are on the way — check back soon.",
+                text = "Try a different shelf or row, or check back soon.",
                 color = StacksColors.Muted,
                 fontFamily = StacksType.Body,
                 fontSize = 14.sp,
@@ -155,23 +170,17 @@ internal val sampleBooks = listOf(
 @Preview(showBackground = true, heightDp = 844, widthDp = 390)
 @Composable
 private fun CatalogContentPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Content(sampleBooks), onRetry = {}) }
-}
-
-@Preview(showBackground = true, widthDp = 390)
-@Composable
-private fun CatalogLoadingPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Loading, onRetry = {}) }
+    LibraryTheme { CatalogContent(CatalogUiState.Content(sampleBooks)) }
 }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
 private fun CatalogEmptyPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Empty, onRetry = {}) }
+    LibraryTheme { CatalogContent(CatalogUiState.Empty) }
 }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
 private fun CatalogErrorPreview() {
-    LibraryTheme { CatalogContent(CatalogUiState.Error("Couldn't load the catalog"), onRetry = {}) }
+    LibraryTheme { CatalogContent(CatalogUiState.Error("Couldn't load the catalog")) }
 }

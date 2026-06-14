@@ -11,13 +11,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +79,73 @@ fun StacksAppBar() {
 }
 
 /**
- * Search bar (.m-search). Visual chrome only for T-001: the contract exposes no search
+ * Book-finder (shelf/row) — the contract-backed `GET /books?shelf&row` filter. Clean default
+ * layout: `catalog.html` shows no shelf/row finder, so this control needs a design pass.
+ * Typed text is ephemeral UI state (`remember`); the applied filter lives in the ViewModel.
+ */
+@Composable
+fun CatalogFinderBar(
+    filter: CatalogFilter,
+    onApply: (String?, Int?) -> Unit,
+    onClear: () -> Unit,
+) {
+    var shelfText by remember(filter) { mutableStateOf(filter.shelf.orEmpty()) }
+    var rowText by remember(filter) { mutableStateOf(filter.row?.toString().orEmpty()) }
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp).padding(bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = shelfText,
+                onValueChange = { shelfText = it },
+                label = { Text("Shelf") },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+            )
+            OutlinedTextField(
+                value = rowText,
+                onValueChange = { new -> rowText = new.filter { it.isDigit() } },
+                label = { Text("Row") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.width(110.dp),
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Button(
+                onClick = { onApply(shelfText, rowText.toIntOrNull()) },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = StacksColors.Pine,
+                    contentColor = StacksColors.OnAccent,
+                ),
+            ) {
+                Text("Find", fontFamily = StacksType.Body, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            }
+            if (filter.isActive) {
+                TextButton(onClick = onClear) {
+                    Text(
+                        text = "Clear",
+                        color = StacksColors.Pine,
+                        fontFamily = StacksType.Body,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Search bar (.m-search). Visual chrome only: the contract exposes no free-text search
  * parameter, so wiring it would invent API surface (anti-drift). Becomes a real field when
  * the contract gains search.
  */

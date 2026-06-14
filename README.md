@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.2.0 · **Status:** v0.2.0 — catalog detail + book-finder (shelf/row).
+**Version:** 0.3.0 · **Status:** v0.3.0 — IAM: auth, roles, permissions (login/register/session; admin role UI + auth-screen design deferred).
 
 ## What's built
 

@@ -1,5 +1,6 @@
 package com.library.android.presentation.screens.catalog
 
+import androidx.compose.runtime.Immutable
 import com.library.android.domain.model.Book
 
 /**
@@ -8,6 +9,7 @@ import com.library.android.domain.model.Book
  */
 sealed interface CatalogUiState {
     data object Loading : CatalogUiState
+    @Immutable
     data class Content(val books: List<Book>) : CatalogUiState
     data object Empty : CatalogUiState
     data class Error(val message: String) : CatalogUiState

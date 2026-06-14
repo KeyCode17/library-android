@@ -1,5 +1,6 @@
 package com.library.android.presentation.screens.recommend
 
+import androidx.compose.runtime.Immutable
 import com.library.android.domain.model.Book
 
 /** UiState for the on-device recommendations screen. */
@@ -8,5 +9,6 @@ sealed interface RecommendationsUiState {
     data object Loading : RecommendationsUiState
     data object Empty : RecommendationsUiState
     data class Error(val message: String) : RecommendationsUiState
+    @Immutable
     data class Loaded(val books: List<Book>) : RecommendationsUiState
 }

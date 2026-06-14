@@ -2,23 +2,27 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.1.0 · **Status:** v0.1.0 — catalog list (GET /books) shipped.
+**Version:** 0.2.0 · **Status:** v0.2.0 — catalog detail + book-finder (shelf/row).
 
 ## What's built
 
-A Compose app that launches to the **catalog list** screen (`docs/designs/catalog.html`),
-fetching books from the backend's `GET /books` over REST. Lending, chat, recommender, etc.
-arrive in later milestones (see `docs/plan/001-implementation-plan-android.md`).
+A Compose app that launches to the **catalog list** (`docs/designs/catalog.html`) and opens a
+**book detail** screen (`docs/designs/catalog-detail.html`), fetching books from the backend's
+`GET /books` and `GET /books/{id}` over REST. A **shelf/row book-finder** filters the list.
+Lending, chat, recommender, etc. arrive in later milestones (see
+`docs/plan/001-implementation-plan-android.md`).
 
-- **UI:** Jetpack Compose + Material 3; catalog list with Loading / Content / Empty / Error states
-- **Networking:** Retrofit + kotlinx.serialization; DTOs mirrored from
+- **UI:** Jetpack Compose + Material 3
+  - catalog list with Loading / Content / Empty / Error states + a shelf/row finder
+  - book detail with Loading / Content / NotFound (404) / Error states
+- **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+- **Navigation:** Navigation Compose — catalog list → `book/{id}` detail
 - **DI:** Hilt (network + repository modules)
 - **Local data:** Room (deps wired; no entities yet)
-- **Architecture:** MVVM / Unidirectional Data Flow (see `docs/adr/0004`) — `CatalogViewModel`
-  exposes a single `StateFlow<CatalogUiState>`; `CatalogScreen` (stateful) + `CatalogContent`
-  (stateless, previewable)
+- **Architecture:** MVVM / Unidirectional Data Flow (see `docs/adr/0004`) — per-screen
+  `StateFlow<UiState>`; stateful `XxxScreen` + stateless, previewable `XxxContent`
 - **Toolchain (ADR-0001):** AGP 9.1, Gradle 9.1, JDK 17 toolchain, Kotlin 2.2.10,
   compileSdk/targetSdk 36, minSdk 24, no `kotlin-android` plugin (AGP 9 built-in Kotlin)
 

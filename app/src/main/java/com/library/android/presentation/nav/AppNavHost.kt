@@ -6,10 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.library.android.presentation.screens.auth.LoginScreen
+import com.library.android.presentation.screens.auth.ProfileScreen
+import com.library.android.presentation.screens.auth.RegisterScreen
 import com.library.android.presentation.screens.catalog.CatalogScreen
 import com.library.android.presentation.screens.detail.BookDetailScreen
 
-/** App navigation graph: catalog list → book detail. State down (routes), events up (lambdas). */
+/** App navigation graph. Catalog is public; profile gates its content behind auth. */
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
@@ -17,6 +20,7 @@ fun AppNavHost() {
         composable(Routes.CATALOG) {
             CatalogScreen(
                 onBookClick = { id -> navController.navigate(Routes.bookDetail(id)) },
+                onProfileClick = { navController.navigate(Routes.PROFILE) },
             )
         }
         composable(
@@ -24,6 +28,33 @@ fun AppNavHost() {
             arguments = listOf(navArgument(Routes.ARG_BOOK_ID) { type = NavType.StringType }),
         ) {
             BookDetailScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onLogin = { navController.navigate(Routes.LOGIN) },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.LOGIN) {
+            LoginScreen(
+                onLoggedIn = {
+                    navController.navigate(Routes.PROFILE) {
+                        popUpTo(Routes.CATALOG)
+                    }
+                },
+                onRegisterClick = { navController.navigate(Routes.REGISTER) },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                onRegistered = {
+                    navController.navigate(Routes.PROFILE) {
+                        popUpTo(Routes.CATALOG)
+                    }
+                },
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

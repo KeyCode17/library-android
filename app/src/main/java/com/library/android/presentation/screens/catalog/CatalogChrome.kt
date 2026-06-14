@@ -2,6 +2,7 @@ package com.library.android.presentation.screens.catalog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -219,19 +220,24 @@ private fun CatalogFilterChip(filter: Filter) {
     }
 }
 
-private data class NavDestination(val label: String, val icon: ImageVector, val selected: Boolean)
+private data class NavDestination(
+    val label: String,
+    val icon: ImageVector,
+    val selected: Boolean,
+    val onClick: () -> Unit,
+)
 
 /**
- * Bottom navigation (.bottomnav). Catalog is the only live destination at T-001; Borrowed
- * (M1), Chat (M3) and Profile arrive in later milestones, so the others are visual only.
+ * Bottom navigation (.bottomnav). Catalog (current) and Profile (auth) are live; Borrowed
+ * (M1) and Chat (M3) arrive in later milestones, so they stay visual only.
  */
 @Composable
-fun StacksBottomNav() {
+fun StacksBottomNav(onProfileClick: () -> Unit) {
     val destinations = listOf(
-        NavDestination("Catalog", StacksIcons.NavCatalog, selected = true),
-        NavDestination("Borrowed", StacksIcons.NavBorrowed, selected = false),
-        NavDestination("Chat", StacksIcons.NavChat, selected = false),
-        NavDestination("Profile", StacksIcons.NavProfile, selected = false),
+        NavDestination("Catalog", StacksIcons.NavCatalog, selected = true, onClick = {}),
+        NavDestination("Borrowed", StacksIcons.NavBorrowed, selected = false, onClick = {}),
+        NavDestination("Chat", StacksIcons.NavChat, selected = false, onClick = {}),
+        NavDestination("Profile", StacksIcons.NavProfile, selected = false, onClick = onProfileClick),
     )
     Column {
         HorizontalDivider(thickness = 1.dp, color = StacksColors.Line)
@@ -239,7 +245,10 @@ fun StacksBottomNav() {
             destinations.forEach { destination ->
                 val tint = if (destination.selected) StacksColors.Pine else StacksColors.Faint
                 Column(
-                    modifier = Modifier.weight(1f).padding(top = 10.dp, bottom = 14.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable(onClick = destination.onClick)
+                        .padding(top = 10.dp, bottom = 14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {

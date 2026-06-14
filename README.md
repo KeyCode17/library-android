@@ -18,8 +18,16 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
-- **Navigation:** Navigation Compose — catalog list → `book/{id}` detail
-- **DI:** Hilt (network + repository modules)
+- **Auth (IAM):** register / login / logout over REST; JWT in `EncryptedSharedPreferences`
+  attached as `Authorization: Bearer` via an OkHttp interceptor; a gated Profile screen reads
+  `/auth/me`. Catalog stays **public**.
+  - ⚠️ **The auth screens (login / register / profile) are a clean default and need a design
+    pass** — there is no `docs/designs/login.html`.
+  - Admin role assignment (`POST /users/{id}/roles`) is **deferred** — not scoped into 0.3.0 by
+    the PRD/FSD (the `AssignRoleRequest` DTO is mirrored from the contract for when it lands).
+- **Navigation:** Navigation Compose — catalog list → `book/{id}` detail; catalog → profile
+  (→ login / register)
+- **DI:** Hilt (network + repository + storage modules)
 - **Local data:** Room (deps wired; no entities yet)
 - **Architecture:** MVVM / Unidirectional Data Flow (see `docs/adr/0004`) — per-screen
   `StateFlow<UiState>`; stateful `XxxScreen` + stateless, previewable `XxxContent`

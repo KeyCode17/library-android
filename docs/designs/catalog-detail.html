@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Book detail (Android design)</title>
+<!-- DESIGN SPEC: shelf location block is the hero. Borrow is the primary action. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+/* ============================================================
+   STACKS — design tokens (extract these verbatim)
+   Display: Fraunces | Body: Inter | Mono (call numbers): JetBrains Mono
+   ============================================================ */
+:root{
+  --ink:#20231F;          /* primary text */
+  --muted:#6B6F69;        /* secondary text */
+  --faint:#9A9A93;        /* tertiary / unavailable */
+  --bg:#F7F6F1;           /* page (cool paper, NOT cream) */
+  --surface:#FFFFFF;      /* cards */
+  --line:#E5E3DB;         /* hairline borders */
+  --pine:#2C5949;         /* primary accent */
+  --pine-700:#1F4034;     /* primary pressed */
+  --sage-100:#E6EDE7;     /* available chip bg */
+  --brass:#9A7637;        /* shelf-tab accent */
+  --brass-700:#6F531F;    /* shelf-tab text */
+  --brass-100:#F0E7D4;    /* shelf-tab bg */
+  --radius:10px; --radius-sm:6px; --radius-pill:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-8:48px;
+  --shadow:0 1px 2px rgba(32,35,31,.05),0 4px 16px rgba(32,35,31,.05);
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bg);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wordmark{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.01em}
+.wordmark .dot{color:var(--pine)}
+
+/* ---- book cover (CSS-drawn spine/cover) ---- */
+.cover{aspect-ratio:3/4;border-radius:var(--radius-sm);position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:var(--sp-3);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);}
+.cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:rgba(0,0,0,.12)}
+.cover .ct{font-family:var(--font-display);font-weight:600;color:#fff;font-size:14px;line-height:1.2;
+  text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.cover .ca{color:rgba(255,255,255,.85);font-size:11px;margin-top:2px}
+
+/* ---- shelf-location tab (THE signature element) ---- */
+.shelf-tab{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
+  font-size:11px;font-weight:500;color:var(--brass-700);background:var(--brass-100);
+  border:1px solid color-mix(in srgb,var(--brass) 35%,transparent);
+  padding:3px 8px 3px 7px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  border-left:3px solid var(--brass);letter-spacing:.02em;white-space:nowrap}
+.shelf-tab .sl{color:var(--brass);font-weight:500}
+
+/* ---- availability ---- */
+.avail{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;
+  padding:3px 9px;border-radius:var(--radius-pill)}
+.avail.in{color:var(--pine);background:var(--sage-100)}
+.avail.out{color:var(--faint);background:#EFEEE9}
+.avail .d{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ---- filter chips ---- */
+.chip{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  padding:6px 12px;border-radius:var(--radius-pill);cursor:pointer;font-weight:500}
+.chip.on{color:#fff;background:var(--pine);border-color:var(--pine)}
+
+/* ---- search ---- */
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius-pill);padding:9px 14px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;font:inherit;color:var(--ink);width:100%}
+.search svg{flex:none}
+
+/* ---- buttons ---- */
+.btn{font:inherit;font-weight:500;font-size:14px;padding:10px 18px;border-radius:var(--radius);
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--pine);border-color:var(--pine);color:#fff}
+.btn.primary:hover{background:var(--pine-700)}
+
+body{background:#E9E7E0;display:flex;flex-wrap:wrap;gap:32px;justify-content:center;padding:32px 16px;min-height:100vh}
+.phone{width:390px;background:var(--bg);border-radius:34px;box-shadow:0 12px 40px rgba(32,35,31,.18);overflow:hidden;position:relative;display:flex;flex-direction:column;height:844px}
+.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:600}
+.appbar{display:flex;align-items:center;gap:12px;padding:6px 18px 12px}
+.appbar .wordmark{font-size:20px}
+.appbar .avatar{width:32px;height:32px;border-radius:50%;background:var(--pine);color:#fff;display:grid;place-items:center;font-weight:600;font-size:12px;margin-left:auto}
+.m-search{padding:0 18px 12px}
+.m-chips{display:flex;gap:8px;padding:0 18px 14px;overflow-x:auto}
+.m-chips .chip{white-space:nowrap}
+.m-list{flex:1;overflow-y:auto;padding:0 18px 18px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.row .cover{width:62px;flex:none;border-radius:var(--radius-sm)}
+.row .cover .ct{font-size:11px}.row .cover .ca{display:none}
+.row .rbody{flex:1;min-width:0;display:flex;flex-direction:column}
+.row .rt{font-family:var(--font-display);font-weight:600;font-size:16px;line-height:1.15}
+.row .rau{color:var(--muted);font-size:13px;margin-top:1px}
+.row .rmeta{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px}
+.row .call{margin-left:auto}
+.bottomnav{display:flex;border-top:1px solid var(--line);background:var(--surface)}
+.bottomnav a{flex:1;text-align:center;padding:10px 0 14px;font-size:11px;color:var(--faint);font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bottomnav a.on{color:var(--pine)}
+.bottomnav .ic{width:22px;height:22px}
+.sectit{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:2px 18px 0;font-weight:600}
+/* detail */
+.d-scroll{flex:1;overflow-y:auto}
+.d-hero{padding:8px 18px 18px;display:flex;gap:16px}
+.d-hero .cover{width:108px;flex:none}
+.d-hero h1{font-family:var(--font-display);font-weight:600;font-size:24px;line-height:1.1}
+.d-hero .by{color:var(--muted);font-size:14px;margin-top:4px}
+.d-hero .st{margin-top:12px}
+.d-shelf{margin:0 18px 16px;display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.d-shelf .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.d-shelf .val{font-family:var(--font-mono);font-size:17px;font-weight:500}
+.d-desc{padding:0 18px 16px;color:var(--ink);line-height:1.65;font-size:14px}
+.d-actions{display:flex;gap:10px;padding:0 18px 18px}
+.d-actions .btn{flex:1;text-align:center}
+</style></head><body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar"><span class="wordmark" style="font-size:16px;color:var(--pine)">‹ Catalog</span><div class="avatar">DK</div></header>
+  <div class="d-scroll">
+    <section class="d-hero">
+      <div class="cover" style="background:#2C5949"><div class="ct">The Left Hand of Darkness</div><div class="ca">Ursula K. Le Guin</div></div>
+      <div><h1>The Left Hand of Darkness</h1><div class="by">Ursula K. Le Guin</div><div class="st"><span class="avail in"><span class="d"></span>Available</span></div>
+        <div style="margin-top:10px"><span class="call">FIC LEG</span></div></div>
+    </section>
+    <div class="d-shelf"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><div><div class="lbl">Find it on the shelf</div><div class="val">Rack 12 · Row 3</div></div><div style="margin-left:auto"><span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R12</span>·3</span></div></div>
+    <p class="d-desc">An envoy from a coalition of worlds arrives on a planet whose inhabitants can choose and change their sex, and must cross an ice sheet to keep a fragile alliance alive. A meditation on difference and trust.</p>
+    <div class="sectit" style="padding-bottom:8px">Details</div>
+    <p class="d-desc" style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">ISBN 978-0-441-47812-5 · 1969 · 304 pp · 2 of 3 copies</p>
+  </div>
+  <div class="d-actions"><button class="btn primary">Borrow</button><button class="btn">Reserve</button></div>
+</div></body></html>

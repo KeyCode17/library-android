@@ -11,6 +11,7 @@ object Routes {
     const val LENDING = "lending"
     const val RECOMMENDATIONS = "recommendations"
     const val CHAT = "chat-room"
+    const val REMINDERS = "reminders"
 
     fun bookDetail(id: String): String = "book/$id"
 }

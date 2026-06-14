@@ -37,6 +37,7 @@ import com.library.android.presentation.theme.StacksType
 fun ProfileScreen(
     onLogin: () -> Unit,
     onBack: () -> Unit,
+    onReminders: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,6 +46,7 @@ fun ProfileScreen(
         onLogout = viewModel::logout,
         onLogin = onLogin,
         onBack = onBack,
+        onReminders = onReminders,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -56,6 +58,7 @@ fun ProfileContent(
     onLogout: () -> Unit = {},
     onLogin: () -> Unit = {},
     onBack: () -> Unit = {},
+    onReminders: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
@@ -69,7 +72,8 @@ fun ProfileContent(
                     color = StacksColors.Pine,
                     modifier = Modifier.testTag(AuthTestTags.LOADING),
                 )
-                is AuthUiState.Authenticated -> AuthenticatedProfile(state.principal, onLogout)
+                is AuthUiState.Authenticated ->
+                    AuthenticatedProfile(state.principal, onLogout, onReminders)
                 AuthUiState.Anonymous -> SignedOutPrompt(onLogin)
                 is AuthUiState.Error -> SignedOutPrompt(onLogin)
             }
@@ -78,7 +82,11 @@ fun ProfileContent(
 }
 
 @Composable
-private fun AuthenticatedProfile(principal: Principal, onLogout: () -> Unit) {
+private fun AuthenticatedProfile(
+    principal: Principal,
+    onLogout: () -> Unit,
+    onReminders: () -> Unit,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -104,10 +112,15 @@ private fun AuthenticatedProfile(principal: Principal, onLogout: () -> Unit) {
             fontSize = 13.sp,
         )
         AuthPrimaryButton(
+            text = "Reminders",
+            enabled = true,
+            onClick = onReminders,
+            modifier = Modifier.padding(top = 16.dp),
+        )
+        AuthPrimaryButton(
             text = "Log out",
             enabled = true,
             onClick = onLogout,
-            modifier = Modifier.padding(top = 16.dp),
         )
     }
 }

@@ -16,6 +16,7 @@ import com.library.android.presentation.screens.chat.ChatScreen
 import com.library.android.presentation.screens.detail.BookDetailScreen
 import com.library.android.presentation.screens.lending.LendingScreen
 import com.library.android.presentation.screens.recommend.RecommendationsScreen
+import com.library.android.presentation.screens.reminders.RemindersScreen
 
 /** App navigation graph. Catalog is public; account + feature screens gate on auth. */
 @Composable
@@ -51,6 +52,7 @@ private fun NavGraphBuilder.accountDestinations(navController: NavHostController
         ProfileScreen(
             onLogin = { navController.navigate(Routes.LOGIN) },
             onBack = { navController.popBackStack() },
+            onReminders = { navController.navigate(Routes.REMINDERS) },
         )
     }
     composable(Routes.LOGIN) {
@@ -83,6 +85,12 @@ private fun NavGraphBuilder.featureDestinations(navController: NavHostController
     }
     composable(Routes.CHAT) {
         ChatScreen(
+            onLogin = { navController.navigate(Routes.LOGIN) },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable(Routes.REMINDERS) {
+        RemindersScreen(
             onLogin = { navController.navigate(Routes.LOGIN) },
             onBack = { navController.popBackStack() },
         )

@@ -41,6 +41,10 @@ style:
   UnusedPrivateMember:
     active: true
     ignoreAnnotated: ['Preview', 'Composable']
+  # Compose UI is full of inherent dp/sp layout literals; MagicNumber is noise here and is
+  # NOT part of the forbidden-patterns rule (ADR-0005). Design tokens live in StacksColors.
+  MagicNumber:
+    active: false
   # bans runBlocking on the main thread (kotlin-forbidden-pattern #7)
   ForbiddenMethodCall:
     active: true

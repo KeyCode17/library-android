@@ -12,6 +12,7 @@ import com.library.android.presentation.screens.auth.RegisterScreen
 import com.library.android.presentation.screens.catalog.CatalogScreen
 import com.library.android.presentation.screens.detail.BookDetailScreen
 import com.library.android.presentation.screens.lending.LendingScreen
+import com.library.android.presentation.screens.recommend.RecommendationsScreen
 
 /** App navigation graph. Catalog is public; profile gates its content behind auth. */
 @Composable
@@ -23,6 +24,7 @@ fun AppNavHost() {
                 onBookClick = { id -> navController.navigate(Routes.bookDetail(id)) },
                 onProfileClick = { navController.navigate(Routes.PROFILE) },
                 onBorrowedClick = { navController.navigate(Routes.LENDING) },
+                onRecommendationsClick = { navController.navigate(Routes.RECOMMENDATIONS) },
             )
         }
         composable(
@@ -41,6 +43,12 @@ fun AppNavHost() {
             LendingScreen(
                 onLogin = { navController.navigate(Routes.LOGIN) },
                 onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.RECOMMENDATIONS) {
+            RecommendationsScreen(
+                onBack = { navController.popBackStack() },
+                onBookClick = { id -> navController.navigate(Routes.bookDetail(id)) },
             )
         }
         composable(Routes.LOGIN) {

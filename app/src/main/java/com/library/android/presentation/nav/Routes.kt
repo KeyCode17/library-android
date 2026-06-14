@@ -9,6 +9,7 @@ object Routes {
     const val REGISTER = "register"
     const val PROFILE = "profile"
     const val LENDING = "lending"
+    const val RECOMMENDATIONS = "recommendations"
 
     fun bookDetail(id: String): String = "book/$id"
 }

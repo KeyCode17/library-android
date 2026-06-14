@@ -39,6 +39,7 @@ fun CatalogScreen(
     onBookClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     onBorrowedClick: () -> Unit,
+    onRecommendationsClick: () -> Unit,
     viewModel: CatalogViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -52,6 +53,7 @@ fun CatalogScreen(
         onBookClick = onBookClick,
         onProfileClick = onProfileClick,
         onBorrowedClick = onBorrowedClick,
+        onRecommendationsClick = onRecommendationsClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -67,10 +69,11 @@ fun CatalogContent(
     onBookClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
     onBorrowedClick: () -> Unit = {},
+    onRecommendationsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
-        StacksAppBar()
+        StacksAppBar(onRecommendationsClick = onRecommendationsClick)
         CatalogSearchBar()
         CatalogFinderBar(filter = filter, onApply = onApplyFinder, onClear = onClearFinder)
         FilterChipsRow()

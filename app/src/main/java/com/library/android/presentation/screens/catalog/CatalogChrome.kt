@@ -44,9 +44,9 @@ import com.library.android.presentation.theme.StacksColors
 import com.library.android.presentation.theme.StacksType
 import com.library.android.presentation.ui.StacksIcons
 
-/** App bar (.appbar): "Stacks." wordmark + circular avatar. */
+/** App bar (.appbar): "Stacks." wordmark + a "For you" recommendations entry + avatar. */
 @Composable
-fun StacksAppBar() {
+fun StacksAppBar(onRecommendationsClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,6 +64,16 @@ fun StacksAppBar() {
             fontSize = 20.sp,
         )
         Spacer(Modifier.weight(1f))
+        Text(
+            text = "For you",
+            color = StacksColors.Pine,
+            fontFamily = StacksType.Body,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .clickable(onClick = onRecommendationsClick)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        )
         Box(
             modifier = Modifier.size(32.dp).clip(CircleShape).background(StacksColors.Pine),
             contentAlignment = Alignment.Center,

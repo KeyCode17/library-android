@@ -37,6 +37,7 @@ import com.library.android.presentation.theme.StacksType
 @Composable
 fun CatalogScreen(
     onBookClick: (String) -> Unit,
+    onProfileClick: () -> Unit,
     viewModel: CatalogViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,6 +49,7 @@ fun CatalogScreen(
         onClearFinder = viewModel::clearFinder,
         onRetry = viewModel::load,
         onBookClick = onBookClick,
+        onProfileClick = onProfileClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -61,6 +63,7 @@ fun CatalogContent(
     onClearFinder: () -> Unit = {},
     onRetry: () -> Unit = {},
     onBookClick: (String) -> Unit = {},
+    onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
@@ -76,7 +79,7 @@ fun CatalogContent(
                 is CatalogUiState.Error -> ErrorState(state.message, onRetry)
             }
         }
-        StacksBottomNav()
+        StacksBottomNav(onProfileClick = onProfileClick)
     }
 }
 

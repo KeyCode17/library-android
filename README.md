@@ -18,6 +18,16 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+- **Notifications (FCM + reminders):** registers the device's FCM token
+  (`POST /notifications/devices`) and shows due-date reminder history (`GET /notifications`);
+  incoming pushes surface as system notifications. Token source behind a `PushTokenProvider`
+  port (fake in tests).
+  - ⚠️ **Real push delivery is a deployment requirement** — it needs a Firebase project and a
+    `google-services.json` + the `com.google.gms.google-services` Gradle plugin. **Neither is in
+    the default build**: the app compiles and the pre-push gate passes WITHOUT them (FCM is inert
+    until configured). Tracked, like other external-service creds.
+  - ⚠️ **The reminders screen is a clean default and needs a design pass.** Real FCM receipt is a
+    manual/instrumented concern, not the JVM gate.
 - **Chat (group, real-time):** room history over REST (`GET /chat/rooms/{room}/messages`) plus a
   live **WebSocket** (`/ws/chat?room=&token=<jwt>`, OkHttp) behind a `ChatSocket` port (real
   adapter for prod; fake in tests). Room selector (ask-a-librarian / book-category / event);

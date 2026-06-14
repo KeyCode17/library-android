@@ -4,9 +4,15 @@ import com.library.android.domain.model.Book
 
 /**
  * Port for catalog reads. The domain depends on this interface; the data layer provides the
- * REST-backed implementation (bound via Hilt). `Result` makes success/failure explicit so
- * callers handle errors without try/catch sprawl.
+ * REST-backed implementation (bound via Hilt).
  */
 interface CatalogRepository {
-    suspend fun getBooks(): Result<List<Book>>
+    /**
+     * Lists books, optionally narrowed by the book-finder ([shelf]/[row]); both are combinable
+     * and optional. `Result` makes success/failure explicit.
+     */
+    suspend fun getBooks(shelf: String? = null, row: Int? = null): Result<List<Book>>
+
+    /** Fetches a single book; distinguishes 404 (NotFound) from other failures via [BookLookup]. */
+    suspend fun getBook(id: String): BookLookup
 }

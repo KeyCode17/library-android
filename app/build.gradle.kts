@@ -91,6 +91,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
+    // QR access card (T-008) — pure-JVM ZXing for encoding; WiFi uses platform APIs (no dep).
+    implementation(libs.zxing.core)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

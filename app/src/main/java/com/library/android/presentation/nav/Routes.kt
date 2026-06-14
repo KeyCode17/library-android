@@ -12,6 +12,8 @@ object Routes {
     const val RECOMMENDATIONS = "recommendations"
     const val CHAT = "chat-room"
     const val REMINDERS = "reminders"
+    const val ACCESS_CARD = "access-card"
+    const val WIFI = "wifi"
 
     fun bookDetail(id: String): String = "book/$id"
 }

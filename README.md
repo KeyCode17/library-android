@@ -18,6 +18,14 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
   gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+- **Device features (QR access card + WiFi):** a QR **access card** encoding a membership
+  reference (the `/auth/me` principal id — never a JWT/secret), rendered on a Compose Canvas;
+  and **library WiFi provisioning** via `WifiNetworkSuggestion` (API 29+, graceful degradation
+  below). Both behind ports (`QrEncoder` = ZXing, `WifiProvisioner` = WifiManager) with fakes in
+  tests; real adapters are instrumented/manual.
+  - ⚠️ **These screens are a clean default and need a design pass** (no design files).
+  - The library WiFi credentials are a **placeholder** — real SSID/passphrase come from config at
+    deployment.
 - **Notifications (FCM + reminders):** registers the device's FCM token
   (`POST /notifications/devices`) and shows due-date reminder history (`GET /notifications`);
   incoming pushes surface as system notifications. Token source behind a `PushTokenProvider`

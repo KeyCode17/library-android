@@ -1,0 +1,9 @@
+pre-commit:
+  commands:
+    detekt: { run: ./gradlew detekt }
+pre-push:
+  piped: true
+  commands:
+    lint:   { run: ./gradlew lintDebug }
+    detekt: { run: ./gradlew detekt }
+    unit:   { run: ./gradlew testDebugUnitTest }   # incl. Robolectric Compose UI tests

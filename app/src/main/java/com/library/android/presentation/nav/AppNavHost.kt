@@ -11,12 +11,14 @@ import androidx.navigation.navArgument
 import com.library.android.presentation.screens.auth.LoginScreen
 import com.library.android.presentation.screens.auth.ProfileScreen
 import com.library.android.presentation.screens.auth.RegisterScreen
+import com.library.android.presentation.screens.card.AccessCardScreen
 import com.library.android.presentation.screens.catalog.CatalogScreen
 import com.library.android.presentation.screens.chat.ChatScreen
 import com.library.android.presentation.screens.detail.BookDetailScreen
 import com.library.android.presentation.screens.lending.LendingScreen
 import com.library.android.presentation.screens.recommend.RecommendationsScreen
 import com.library.android.presentation.screens.reminders.RemindersScreen
+import com.library.android.presentation.screens.wifi.WifiScreen
 
 /** App navigation graph. Catalog is public; account + feature screens gate on auth. */
 @Composable
@@ -53,6 +55,8 @@ private fun NavGraphBuilder.accountDestinations(navController: NavHostController
             onLogin = { navController.navigate(Routes.LOGIN) },
             onBack = { navController.popBackStack() },
             onReminders = { navController.navigate(Routes.REMINDERS) },
+            onAccessCard = { navController.navigate(Routes.ACCESS_CARD) },
+            onWifi = { navController.navigate(Routes.WIFI) },
         )
     }
     composable(Routes.LOGIN) {
@@ -94,5 +98,14 @@ private fun NavGraphBuilder.featureDestinations(navController: NavHostController
             onLogin = { navController.navigate(Routes.LOGIN) },
             onBack = { navController.popBackStack() },
         )
+    }
+    composable(Routes.ACCESS_CARD) {
+        AccessCardScreen(
+            onLogin = { navController.navigate(Routes.LOGIN) },
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable(Routes.WIFI) {
+        WifiScreen(onBack = { navController.popBackStack() })
     }
 }

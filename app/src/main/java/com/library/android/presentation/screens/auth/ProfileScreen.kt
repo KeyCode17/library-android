@@ -38,6 +38,8 @@ fun ProfileScreen(
     onLogin: () -> Unit,
     onBack: () -> Unit,
     onReminders: () -> Unit,
+    onAccessCard: () -> Unit,
+    onWifi: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -46,10 +48,17 @@ fun ProfileScreen(
         onLogout = viewModel::logout,
         onLogin = onLogin,
         onBack = onBack,
-        onReminders = onReminders,
+        actions = ProfileActions(onReminders, onAccessCard, onWifi),
         modifier = Modifier.systemBarsPadding(),
     )
 }
+
+/** The authenticated-area navigation actions, grouped to keep the profile signature small. */
+data class ProfileActions(
+    val onReminders: () -> Unit = {},
+    val onAccessCard: () -> Unit = {},
+    val onWifi: () -> Unit = {},
+)
 
 /** Pure, previewable profile UI. */
 @Composable
@@ -58,7 +67,7 @@ fun ProfileContent(
     onLogout: () -> Unit = {},
     onLogin: () -> Unit = {},
     onBack: () -> Unit = {},
-    onReminders: () -> Unit = {},
+    actions: ProfileActions = ProfileActions(),
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
@@ -73,7 +82,7 @@ fun ProfileContent(
                     modifier = Modifier.testTag(AuthTestTags.LOADING),
                 )
                 is AuthUiState.Authenticated ->
-                    AuthenticatedProfile(state.principal, onLogout, onReminders)
+                    AuthenticatedProfile(state.principal, onLogout, actions)
                 AuthUiState.Anonymous -> SignedOutPrompt(onLogin)
                 is AuthUiState.Error -> SignedOutPrompt(onLogin)
             }
@@ -85,7 +94,7 @@ fun ProfileContent(
 private fun AuthenticatedProfile(
     principal: Principal,
     onLogout: () -> Unit,
-    onReminders: () -> Unit,
+    actions: ProfileActions,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,17 +120,20 @@ private fun AuthenticatedProfile(
             fontFamily = StacksType.Mono,
             fontSize = 13.sp,
         )
-        AuthPrimaryButton(
-            text = "Reminders",
-            enabled = true,
-            onClick = onReminders,
-            modifier = Modifier.padding(top = 16.dp),
+        val navActions = listOf(
+            "Reminders" to actions.onReminders,
+            "Access card" to actions.onAccessCard,
+            "Library WiFi" to actions.onWifi,
         )
-        AuthPrimaryButton(
-            text = "Log out",
-            enabled = true,
-            onClick = onLogout,
-        )
+        navActions.forEachIndexed { index, (label, onClick) ->
+            AuthPrimaryButton(
+                text = label,
+                enabled = true,
+                onClick = onClick,
+                modifier = if (index == 0) Modifier.padding(top = 16.dp) else Modifier,
+            )
+        }
+        AuthPrimaryButton(text = "Log out", enabled = true, onClick = onLogout)
     }
 }
 

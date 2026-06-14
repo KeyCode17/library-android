@@ -25,6 +25,7 @@ kotlinxCoroutines = "1.9.0"
 securityCrypto = "1.1.0"  # EncryptedSharedPreferences for the JWT (T-003)
 mlkitCodeScanner = "16.1.0"  # ML Kit barcode (Google code scanner) for borrow-by-scan (T-004)
 firebaseBom = "34.14.1"      # FCM (firebase-messaging) for push notifications (T-007)
+zxing = "3.5.4"              # QR encoding for the access card (T-008)
 # --- quality + test stack (M0) ---
 detekt = "1.23.8"        # arturbosch stable; dev.detekt 2.0 is alpha — avoid
 composeRules = "0.6.1"   # io.nlopez.compose.rules detekt ruleset
@@ -67,6 +68,7 @@ mlkit-code-scanner = { group = "com.google.android.gms", name = "play-services-c
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 # --- test ---
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }

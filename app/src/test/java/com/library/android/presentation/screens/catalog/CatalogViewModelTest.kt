@@ -31,6 +31,7 @@ class CatalogViewModelTest {
         }
 
         override suspend fun getBook(id: String): BookLookup = BookLookup.NotFound
+        override suspend fun findByIsbn(isbn: String): Result<Book?> = Result.success(null)
     }
 
     private fun viewModel(fake: FakeCatalogRepository): CatalogViewModel =

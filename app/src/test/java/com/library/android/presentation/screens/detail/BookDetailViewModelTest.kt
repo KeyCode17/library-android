@@ -24,6 +24,7 @@ class BookDetailViewModelTest {
             Result.success(emptyList())
 
         override suspend fun getBook(id: String): BookLookup = lookup
+        override suspend fun findByIsbn(isbn: String): Result<Book?> = Result.success(null)
     }
 
     private fun viewModel(lookup: BookLookup, id: String = "1"): BookDetailViewModel =

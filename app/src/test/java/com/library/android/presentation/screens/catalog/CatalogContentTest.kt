@@ -3,6 +3,7 @@ package com.library.android.presentation.screens.catalog
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -34,6 +35,8 @@ class CatalogContentTest {
         composeRule.onNodeWithText("Ursula K. Le Guin").assertIsDisplayed()
         composeRule.onNodeWithText("R12").assertIsDisplayed()
         composeRule.onAllNodesWithText("Available").onFirst().assertIsDisplayed()
+        // a11y: bottom-nav icons carry content descriptions for TalkBack.
+        composeRule.onNodeWithContentDescription("Profile").assertExists()
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.library.android.presentation.screens.card
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.library.android.domain.device.QrMatrix
@@ -31,6 +32,8 @@ class AccessCardContentTest {
         composeRule.onNodeWithTag(AccessCardTestTags.QR).assertIsDisplayed()
         composeRule.onNodeWithText("dana@stacks.app").assertIsDisplayed()
         composeRule.onNodeWithText("ID u1").assertIsDisplayed()
+        // a11y: the QR is meaningful content, not decorative.
+        composeRule.onNodeWithContentDescription("Library access card QR code").assertExists()
     }
 
     @Test

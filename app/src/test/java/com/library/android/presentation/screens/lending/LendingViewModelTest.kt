@@ -62,6 +62,8 @@ class LendingViewModelTest {
         override suspend fun getBooks(shelf: String?, row: Int?): Result<List<Book>> =
             Result.success(books)
         override suspend fun getBook(id: String): BookLookup = BookLookup.NotFound
+        override suspend fun findByIsbn(isbn: String): Result<Book?> =
+            Result.success(books.firstOrNull { it.isbn == isbn })
     }
 
     private class FakeBarcodeScanner(private val result: Result<String>) : BarcodeScanner {

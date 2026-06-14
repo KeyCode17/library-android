@@ -40,6 +40,7 @@ class RecommendationsViewModelTest {
     private class FakeCatalogRepository(private val result: Result<List<Book>>) : CatalogRepository {
         override suspend fun getBooks(shelf: String?, row: Int?): Result<List<Book>> = result
         override suspend fun getBook(id: String): BookLookup = BookLookup.NotFound
+        override suspend fun findByIsbn(isbn: String): Result<Book?> = Result.success(null)
     }
 
     private fun viewModel(catalog: Result<List<Book>>): RecommendationsViewModel =

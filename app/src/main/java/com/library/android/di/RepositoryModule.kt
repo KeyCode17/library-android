@@ -1,6 +1,8 @@
 package com.library.android.di
 
+import com.library.android.data.remote.AuthRemoteRepository
 import com.library.android.data.remote.CatalogRemoteRepository
+import com.library.android.domain.repo.AuthRepository
 import com.library.android.domain.repo.CatalogRepository
 import dagger.Binds
 import dagger.Module
@@ -15,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCatalogRepository(impl: CatalogRemoteRepository): CatalogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(impl: AuthRemoteRepository): AuthRepository
 }

@@ -1,5 +1,7 @@
 package com.library.android.di
 
+import com.library.android.data.remote.AuthApi
+import com.library.android.data.remote.AuthInterceptor
 import com.library.android.data.remote.CatalogApi
 import dagger.Module
 import dagger.Provides
@@ -32,9 +34,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .build()
     }
@@ -53,6 +56,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideCatalogApi(retrofit: Retrofit): CatalogApi = retrofit.create(CatalogApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 
     @Provides
     @Singleton

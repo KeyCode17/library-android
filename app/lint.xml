@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!--
+      The vendored UniFFI bindings (uniffi/recommender_ffi) call java.lang.ref.Cleaner (API 33+)
+      behind a runtime Build.VERSION guard that lint can't follow, and they are generated code
+      (backend build.sh) we must not hand-edit. Scope-ignore NewApi for that package ONLY —
+      NewApi stays enforced for all hand-written code.
+    -->
+    <issue id="NewApi">
+        <ignore regexp="uniffi/recommender_ffi" />
+    </issue>
+</lint>

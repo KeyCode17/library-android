@@ -45,6 +45,7 @@ android {
         abortOnError = true        // a lint error fails the build (CI gate)
         warningsAsErrors = false
         checkReleaseBuilds = false // the gate runs lintDebug only
+        lintConfig = file("lint.xml") // scope-ignores NewApi for the generated UniFFI bindings
     }
 }
 
@@ -66,7 +67,12 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
-    // implementation(libs.jna)  // uncomment at M2 for the recommender UniFFI binding
+
+    // On-device recommender (T-005): vendored UniFFI AAR (per-ABI .so) + JNA runtime. The
+    // generated Kotlin bindings are added as source above (src/uniffi/java). Regenerate both
+    // via the backend's build.sh — never hand-edit. The @aar JNA artifact ships the JNA .so.
+    implementation(files("libs/recommender.aar"))
+    implementation("net.java.dev.jna:jna:5.14.0@aar")
 
     // Networking (REST consumer of the backend contract) — no Room cache in this slice
     implementation(libs.retrofit)
@@ -104,4 +110,9 @@ detekt {
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     // Forbidden-patterns enforcement targets production code; JVM tests are gated separately.
     source.setFrom(files("src/main/java"))
+}
+
+// The vendored UniFFI bindings are generated (backend build.sh) — exclude from detekt.
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude("**/uniffi/**")
 }

@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.6.0 · **Status:** v0.6.0 — Chat: group chat over WebSocket.
+**Version:** 0.7.0 · **Status:** v0.7.0 — Notifications: due-date scheduler + FCM push (FCM needs a real Firebase config to deliver in production).
 
 ## What's built
 

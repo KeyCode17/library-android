@@ -19,8 +19,8 @@ android {
         applicationId = "com.library.android"
         minSdk = 24                 // Android 7.0 — wide coverage, no legacy multidex
         targetSdk = 36              // match compileSdk
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

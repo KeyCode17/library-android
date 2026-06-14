@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.4.0 · **Status:** v0.4.0 — Lending: borrow/return/due/staff-approve (ML Kit barcode borrow; server-side ISBN lookup is a tracked follow-up).
+**Version:** 0.5.0 · **Status:** v0.5.0 — Recommender (pure crate + /recommend; android on-device UniFFI binding).
 
 ## What's built
 

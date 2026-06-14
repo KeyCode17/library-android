@@ -7,6 +7,9 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <!-- Push reminders (FCM). Runtime prompt required on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Library WiFi provisioning via WifiNetworkSuggestion (API 29+). -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".LibraryApplication"

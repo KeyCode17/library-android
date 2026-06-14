@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 0.1.0 · **Status:** catalog list (T-001) on the M0 toolchain.
+**Version:** 0.1.0 · **Status:** v0.1.0 — catalog list (GET /books) shipped.
 
 ## What's built
 

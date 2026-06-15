@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions") // Compose screen: many small, previewable composables
+
 package com.library.android.presentation.screens.auth
 
 import androidx.compose.foundation.background
@@ -8,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.clip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -75,19 +79,22 @@ fun ProfileContent(
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
         AuthTopBar("Profile", onBack)
-        Box(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(24.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            when (state) {
-                AuthUiState.Loading -> CircularProgressIndicator(
-                    color = StacksColors.Pine,
-                    modifier = Modifier.testTag(AuthTestTags.LOADING),
-                )
-                is AuthUiState.Authenticated ->
-                    AuthenticatedProfile(state.principal, onLogout, actions)
-                AuthUiState.Anonymous -> SignedOutPrompt(onLogin)
-                is AuthUiState.Error -> SignedOutPrompt(onLogin)
+        when (state) {
+            is AuthUiState.Authenticated ->
+                AuthenticatedProfile(state.principal, onLogout, actions)
+            // Loading + signed-out states are vertically centered (design `.empty`).
+            else -> Box(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (state is AuthUiState.Loading) {
+                    CircularProgressIndicator(
+                        color = StacksColors.Pine,
+                        modifier = Modifier.testTag(AuthTestTags.LOADING),
+                    )
+                } else {
+                    SignedOutPrompt(onLogin)
+                }
             }
         }
     }
@@ -99,64 +106,87 @@ private fun AuthenticatedProfile(
     onLogout: () -> Unit,
     actions: ProfileActions,
 ) {
+    // Design: top-aligned, scrollable; identity block (padding-top 32px) over the nav stack.
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+            .padding(top = 32.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        IdentityBlock(principal)
+        if (!principal.verified) {
+            UnverifiedBanner(onVerify = actions.onVerifyEmail)
+        }
+        NavStack(principal, onLogout, actions)
+    }
+}
+
+/** "Signed in as / {email} / Role: {role}" identity header (design `.empty` flex-start). */
+@Composable
+private fun IdentityBlock(principal: Principal) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(
             text = "Signed in as",
             color = StacksColors.Muted,
             fontFamily = StacksType.Body,
-            fontSize = 13.sp,
+            fontSize = 14.sp,
         )
         Text(
             text = principal.email,
             color = StacksColors.Ink,
             fontFamily = StacksType.Display,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 20.sp,
+            fontSize = 24.sp,
             textAlign = TextAlign.Center,
         )
         Text(
             text = "Role: ${roleLabel(principal.role)}",
             color = StacksColors.Muted,
             fontFamily = StacksType.Mono,
-            fontSize = 13.sp,
+            fontSize = 14.sp,
         )
-        if (!principal.verified) {
-            UnverifiedBanner(onVerify = actions.onVerifyEmail)
-        }
-        val navActions = buildList {
-            add("Reminders" to actions.onReminders)
-            add("Access card" to actions.onAccessCard)
-            add("Library WiFi" to actions.onWifi)
-            add("Account settings" to actions.onAccount)
-            if (principal.role == Role.ADMIN) add("Manage users" to actions.onManageUsers)
-        }
-        navActions.forEachIndexed { index, (label, onClick) ->
-            AuthPrimaryButton(
-                text = label,
-                enabled = true,
-                onClick = onClick,
-                modifier = if (index == 0) Modifier.padding(top = 16.dp) else Modifier,
-            )
+    }
+}
+
+/** Full-width nav button stack; admins also get "Manage users" (design `.form` gap 10px). */
+@Composable
+private fun NavStack(
+    principal: Principal,
+    onLogout: () -> Unit,
+    actions: ProfileActions,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        AuthPrimaryButton(text = "Reminders", enabled = true, onClick = actions.onReminders)
+        AuthPrimaryButton(text = "Access card", enabled = true, onClick = actions.onAccessCard)
+        AuthPrimaryButton(text = "Library WiFi", enabled = true, onClick = actions.onWifi)
+        AuthPrimaryButton(text = "Account settings", enabled = true, onClick = actions.onAccount)
+        if (principal.role == Role.ADMIN) {
+            AuthPrimaryButton(text = "Manage users", enabled = true, onClick = actions.onManageUsers)
         }
         AuthPrimaryButton(text = "Log out", enabled = true, onClick = onLogout)
     }
 }
 
-/** Banner shown when the signed-in user's email is unverified. */
+/** Banner shown when the signed-in user's email is unverified (design `.banner`). */
 @Composable
 private fun UnverifiedBanner(onVerify: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(top = 8.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(StacksColors.Brass100)
-            .padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
             text = "Please verify your email to secure your account.",
@@ -164,6 +194,7 @@ private fun UnverifiedBanner(onVerify: () -> Unit) {
             fontFamily = StacksType.Body,
             fontSize = 13.sp,
             textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
         )
         AuthPrimaryButton(text = "Verify email", enabled = true, onClick = onVerify)
     }
@@ -194,7 +225,7 @@ private fun SignedOutPrompt(onLogin: () -> Unit) {
             text = "Log in",
             enabled = true,
             onClick = onLogin,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 }
@@ -209,6 +240,18 @@ private fun ProfileAuthenticatedPreview() {
         ProfileContent(
             AuthUiState.Authenticated(
                 Principal("1", "dana@stacks.app", Role.MEMBER, verified = true, active = true),
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun ProfileUnverifiedPreview() {
+    LibraryTheme {
+        ProfileContent(
+            AuthUiState.Authenticated(
+                Principal("1", "dana@stacks.app", Role.MEMBER, verified = false, active = true),
             ),
         )
     }

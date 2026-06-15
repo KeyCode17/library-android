@@ -1,6 +1,7 @@
 package com.library.android.presentation.screens.auth
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -91,26 +92,25 @@ fun LoginContent(
                     modifier = Modifier.testTag(AuthTestTags.LOADING),
                 )
             }
-            TextButton(onClick = onRegisterClick) {
-                Text(
-                    text = "New here? Create an account",
-                    color = StacksColors.Pine,
-                    fontFamily = StacksType.Body,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
-                )
-            }
-            TextButton(onClick = onForgotPassword) {
-                Text(
-                    text = "Forgot password?",
-                    color = StacksColors.Pine,
-                    fontFamily = StacksType.Body,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
-                )
-            }
+            AuthLink(text = "New here? Create an account", onClick = onRegisterClick)
+            AuthLink(text = "Forgot password?", onClick = onForgotPassword)
         }
     }
+}
+
+/** Flat text link (.link in the design): pine, medium, 14sp; spaced by the form rhythm. */
+@Composable
+private fun AuthLink(text: String, onClick: () -> Unit) {
+    Text(
+        text = text,
+        color = StacksColors.Pine,
+        fontFamily = StacksType.Body,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        modifier = Modifier
+            .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
+            .clickable(onClick = onClick),
+    )
 }
 
 @Preview(showBackground = true, widthDp = 390)

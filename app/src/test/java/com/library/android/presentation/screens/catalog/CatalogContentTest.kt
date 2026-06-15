@@ -49,6 +49,7 @@ class CatalogContentTest {
 
         composeRule.onNodeWithText("Sign in").assertIsDisplayed()
         composeRule.onNodeWithText("DK").assertDoesNotExist() // no leftover mockup avatar
+        composeRule.onNodeWithText("For you").assertDoesNotExist() // recommendations hidden when anonymous
     }
 
     @Test
@@ -61,6 +62,7 @@ class CatalogContentTest {
 
         composeRule.onNodeWithText("DA").assertIsDisplayed()
         composeRule.onNodeWithText("Sign in").assertDoesNotExist()
+        composeRule.onNodeWithText("For you").assertIsDisplayed() // recommendations shown when authenticated
     }
 
     @Test

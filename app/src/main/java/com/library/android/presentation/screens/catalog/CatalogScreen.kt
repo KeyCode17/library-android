@@ -61,6 +61,7 @@ fun CatalogScreen(
         filter = filter,
         onApplyFinder = viewModel::applyFinder,
         onClearFinder = viewModel::clearFinder,
+        onSearch = viewModel::search,
         onRetry = viewModel::load,
         onBookClick = onBookClick,
         onProfileClick = onProfileClick,
@@ -84,6 +85,7 @@ fun CatalogContent(
     filter: CatalogFilter = CatalogFilter(),
     onApplyFinder: (String?, Int?) -> Unit = { _, _ -> },
     onClearFinder: () -> Unit = {},
+    onSearch: (String) -> Unit = {},
     onRetry: () -> Unit = {},
     onBookClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -100,7 +102,7 @@ fun CatalogContent(
             accountInitials = accountInitials,
             onAccountClick = onAccountClick,
         )
-        CatalogSearchBar()
+        CatalogSearchBar(query = filter.query.orEmpty(), onSearch = onSearch)
         CatalogFinderBar(filter = filter, onApply = onApplyFinder, onClear = onClearFinder)
         FilterChipsRow()
         Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -158,7 +160,7 @@ private fun EmptyState() {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Try a different shelf or row, or check back soon.",
+                text = "Try a different search, shelf or row, or check back soon.",
                 color = StacksColors.Muted,
                 fontFamily = StacksType.Body,
                 fontSize = 14.sp,

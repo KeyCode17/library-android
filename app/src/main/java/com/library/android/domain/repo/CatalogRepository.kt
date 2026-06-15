@@ -8,10 +8,25 @@ import com.library.android.domain.model.Book
  */
 interface CatalogRepository {
     /**
-     * Lists books, optionally narrowed by the book-finder ([shelf]/[row]); both are combinable
-     * and optional. `Result` makes success/failure explicit.
+     * Lists books, optionally narrowed by the book-finder ([shelf]/[row]) and free-text [query]
+     * (`GET /books?q=`); all combinable and optional. Refreshes the offline cache (ADR 0002) on a
+     * successful unfiltered load. `Result` makes success/failure explicit.
      */
-    suspend fun getBooks(shelf: String? = null, row: Int? = null): Result<List<Book>>
+    suspend fun getBooks(
+        shelf: String? = null,
+        row: Int? = null,
+        query: String? = null,
+    ): Result<List<Book>>
+
+    /**
+     * Reads the cached catalog (Room) for instant display, applying the same [shelf]/[row]/[query]
+     * filter in-memory. Returns an empty list when nothing is cached yet.
+     */
+    suspend fun cachedBooks(
+        shelf: String? = null,
+        row: Int? = null,
+        query: String? = null,
+    ): List<Book>
 
     /** Fetches a single book; distinguishes 404 (NotFound) from other failures via [BookLookup]. */
     suspend fun getBook(id: String): BookLookup

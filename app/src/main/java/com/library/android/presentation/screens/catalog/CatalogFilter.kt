@@ -1,9 +1,10 @@
 package com.library.android.presentation.screens.catalog
 
-/** Active book-finder filter sent to `GET /books`. Both fields optional and combinable. */
+/** Active catalog filter sent to `GET /books`. Text search + shelf/row finder, all combinable. */
 data class CatalogFilter(
     val shelf: String? = null,
     val row: Int? = null,
+    val query: String? = null,
 ) {
-    val isActive: Boolean get() = shelf != null || row != null
+    val isActive: Boolean get() = shelf != null || row != null || query != null
 }

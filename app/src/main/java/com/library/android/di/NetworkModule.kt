@@ -6,6 +6,7 @@ import com.library.android.data.remote.CatalogApi
 import com.library.android.data.remote.ChatApi
 import com.library.android.data.remote.LoanApi
 import com.library.android.data.remote.NotificationApi
+import com.library.android.data.remote.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,6 +77,10 @@ object NetworkModule {
     @Singleton
     fun provideNotificationApi(retrofit: Retrofit): NotificationApi =
         retrofit.create(NotificationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUserApi(retrofit: Retrofit): UserApi = retrofit.create(UserApi::class.java)
 
     @Provides
     @Singleton

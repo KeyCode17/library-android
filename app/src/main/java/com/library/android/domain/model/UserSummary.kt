@@ -1,10 +1,11 @@
 package com.library.android.domain.model
 
-/** The authenticated user (contract: Principal — a user record without the password hash). */
-data class Principal(
+/** Admin view of a user (contract: UserSummary). `createdAt` is an ISO-8601 string. */
+data class UserSummary(
     val id: String,
     val email: String,
     val role: Role,
     val verified: Boolean,
     val active: Boolean,
+    val createdAt: String,
 )

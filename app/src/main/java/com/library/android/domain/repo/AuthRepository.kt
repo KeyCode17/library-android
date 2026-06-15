@@ -3,9 +3,10 @@ package com.library.android.domain.repo
 import com.library.android.domain.model.Principal
 
 /**
- * Port for authentication. The data layer logs in/out against the IAM endpoints and owns the
- * bearer token's secure storage; the domain only sees [Principal]s and `Result`s.
+ * Port for authentication and account self-service. One cohesive boundary over the IAM `/auth`
+ * surface (session + self-service + the public email flows).
  */
+@Suppress("TooManyFunctions") // cohesive IAM auth surface, not a god interface
 interface AuthRepository {
     /** Whether a token is currently stored (cheap startup check). */
     suspend fun hasSession(): Boolean
@@ -21,4 +22,26 @@ interface AuthRepository {
 
     /** Clears the stored token. */
     suspend fun logout()
+
+    // --- IAM v2 self-service ---
+
+    /** Updates the current user's email (`PATCH /auth/me`). */
+    suspend fun updateEmail(email: String): Result<Principal>
+
+    /** Changes the current user's password (`POST /auth/change-password`). */
+    suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit>
+
+    /** Deletes the current user's account (`DELETE /auth/me`) and clears the token. */
+    suspend fun deleteAccount(): Result<Unit>
+
+    // --- IAM v2 email flows (public; token from the emailed link) ---
+
+    /** Requests a password-reset email (`POST /auth/forgot-password`); always neutral. */
+    suspend fun forgotPassword(email: String): Result<Unit>
+
+    /** Resets the password with a token (`POST /auth/reset-password`). */
+    suspend fun resetPassword(token: String, newPassword: String): Result<Unit>
+
+    /** Verifies an email with a token (`POST /auth/verify-email`). */
+    suspend fun verifyEmail(token: String): Result<Unit>
 }

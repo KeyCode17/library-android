@@ -38,7 +38,8 @@ class RecommendationsViewModelTest {
     }
 
     private class FakeCatalogRepository(private val result: Result<List<Book>>) : CatalogRepository {
-        override suspend fun getBooks(shelf: String?, row: Int?): Result<List<Book>> = result
+        override suspend fun getBooks(shelf: String?, row: Int?, query: String?): Result<List<Book>> = result
+        override suspend fun cachedBooks(shelf: String?, row: Int?, query: String?): List<Book> = emptyList()
         override suspend fun getBook(id: String): BookLookup = BookLookup.NotFound
         override suspend fun findByIsbn(isbn: String): Result<Book?> = Result.success(null)
     }

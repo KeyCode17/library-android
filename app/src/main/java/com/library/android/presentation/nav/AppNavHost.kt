@@ -54,7 +54,10 @@ private fun NavGraphBuilder.catalogDestinations(navController: NavHostController
         route = Routes.BOOK_DETAIL,
         arguments = listOf(navArgument(Routes.ARG_BOOK_ID) { type = NavType.StringType }),
     ) {
-        BookDetailScreen(onBack = { navController.popBackStack() })
+        BookDetailScreen(
+            onBack = { navController.popBackStack() },
+            onLoginClick = { navController.navigate(Routes.LOGIN) },
+        )
     }
 }
 

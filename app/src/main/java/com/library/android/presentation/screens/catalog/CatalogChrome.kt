@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,11 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -211,28 +214,43 @@ fun CatalogFinderBar(
 }
 
 /**
- * Search bar (.m-search). Visual chrome only: the contract exposes no free-text search
- * parameter, so wiring it would invent API surface (anti-drift). Becomes a real field when
- * the contract gains search.
+ * Search bar (.m-search) — wired to `GET /books?q=`. Typed text is ephemeral UI state
+ * (`remember`); the applied query lives in the ViewModel and is submitted via the keyboard
+ * "Search" action. Clean default layout — `catalog.html` styles the chrome; design pass pending.
  */
 @Composable
-fun CatalogSearchBar() {
+fun CatalogSearchBar(query: String, onSearch: (String) -> Unit) {
+    var text by remember(query) { mutableStateOf(query) }
     val shape = RoundedCornerShape(999.dp)
-    Row(
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it },
+        singleLine = true,
+        shape = shape,
+        leadingIcon = {
+            Icon(
+                imageVector = StacksIcons.Search,
+                contentDescription = null,
+                tint = StacksColors.Muted,
+                modifier = Modifier.size(16.dp),
+            )
+        },
+        placeholder = {
+            Text(
+                text = "Search the catalog",
+                color = StacksColors.Muted,
+                fontFamily = StacksType.Body,
+                fontSize = 15.sp,
+            )
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearch(text.trim()) }),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .padding(bottom = 12.dp)
-            .clip(shape)
-            .background(StacksColors.Surface)
-            .border(1.dp, StacksColors.Line, shape)
-            .padding(horizontal = 14.dp, vertical = 9.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(StacksIcons.Search, contentDescription = null, tint = StacksColors.Muted, modifier = Modifier.size(16.dp))
-        Text("Search the catalog", color = StacksColors.Muted, fontFamily = StacksType.Body, fontSize = 15.sp)
-    }
+            .testTag(CatalogTestTags.SEARCH_FIELD),
+    )
 }
 
 private data class Filter(val label: String, val selected: Boolean)

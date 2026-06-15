@@ -20,8 +20,10 @@ class BorrowByBarcodeUseCaseTest {
 
     private class FakeCatalogRepository(private val byIsbn: Map<String, Book>) : CatalogRepository {
         var resolvedIsbn: String? = null
-        override suspend fun getBooks(shelf: String?, row: Int?): Result<List<Book>> =
+        override suspend fun getBooks(shelf: String?, row: Int?, query: String?): Result<List<Book>> =
             Result.success(byIsbn.values.toList())
+        override suspend fun cachedBooks(shelf: String?, row: Int?, query: String?): List<Book> =
+            byIsbn.values.toList()
         override suspend fun getBook(id: String): BookLookup = BookLookup.NotFound
         override suspend fun findByIsbn(isbn: String): Result<Book?> {
             resolvedIsbn = isbn

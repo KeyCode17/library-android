@@ -11,6 +11,8 @@ import retrofit2.http.Query
  * the contract; null query params (shelf/row) are omitted by Retrofit.
  */
 interface CatalogApi {
+    // One parameter per contract query param (page/size/shelf/row/isbn/q) — a Retrofit binding, not a domain call.
+    @Suppress("LongParameterList")
     @GET("books")
     suspend fun listBooks(
         @Query("page") page: Int = 1,
@@ -18,6 +20,7 @@ interface CatalogApi {
         @Query("shelf") shelf: String? = null,
         @Query("row") row: Int? = null,
         @Query("isbn") isbn: String? = null,
+        @Query("q") query: String? = null,
     ): BookListDto
 
     /** `GET /books/{id}` — 404 surfaces as a Retrofit `HttpException` (handled in the repository). */

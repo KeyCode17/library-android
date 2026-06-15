@@ -5,15 +5,15 @@ import com.library.android.domain.repo.CatalogRepository
 import javax.inject.Inject
 
 /**
- * Lists the catalog (first page), optionally narrowed by the book-finder ([shelf]/[row]) and
- * free-text [query]. Refreshes the offline cache as a side effect. Callable like a function.
+ * Reads the cached catalog (Room) for instant offline-first display, applying the same
+ * [shelf]/[row]/[query] filter. Empty until the first successful network refresh.
  */
-class GetBooksUseCase @Inject constructor(
+class GetCachedBooksUseCase @Inject constructor(
     private val repository: CatalogRepository,
 ) {
     suspend operator fun invoke(
         shelf: String? = null,
         row: Int? = null,
         query: String? = null,
-    ): Result<List<Book>> = repository.getBooks(shelf, row, query)
+    ): List<Book> = repository.cachedBooks(shelf, row, query)
 }

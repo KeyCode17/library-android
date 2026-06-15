@@ -40,6 +40,30 @@ class CatalogContentTest {
     }
 
     @Test
+    fun appBar_anonymous_showsSignInNotFakeAvatar() {
+        composeRule.setContent {
+            LibraryTheme {
+                CatalogContent(CatalogUiState.Content(sampleBooks), accountInitials = null)
+            }
+        }
+
+        composeRule.onNodeWithText("Sign in").assertIsDisplayed()
+        composeRule.onNodeWithText("DK").assertDoesNotExist() // no leftover mockup avatar
+    }
+
+    @Test
+    fun appBar_authenticated_showsRealInitials() {
+        composeRule.setContent {
+            LibraryTheme {
+                CatalogContent(CatalogUiState.Content(sampleBooks), accountInitials = "DA")
+            }
+        }
+
+        composeRule.onNodeWithText("DA").assertIsDisplayed()
+        composeRule.onNodeWithText("Sign in").assertDoesNotExist()
+    }
+
+    @Test
     fun loading_displaysProgress() {
         composeRule.setContent {
             LibraryTheme { CatalogContent(CatalogUiState.Loading, onRetry = {}) }

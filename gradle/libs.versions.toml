@@ -16,7 +16,7 @@ hilt = "2.59.2"          # 2.52 (template) predates AGP 9 support; 2.57+ support
 hiltNavigationCompose = "1.2.0"
 room = "2.7.0"
 ksp = "2.2.10-2.0.2"     # must track the kotlin version (2.2.10-1.0.0 does not exist)
-jna = "5.14.0"           # for the UniFFI recommender binding (M2)
+jna = "5.17.0"           # UniFFI recommender binding; 5.15.0+ ships 16 KB-page-aligned .so
 # --- networking / serialization / async (T-001) ---
 retrofit = "2.11.0"
 okhttp = "4.12.0"

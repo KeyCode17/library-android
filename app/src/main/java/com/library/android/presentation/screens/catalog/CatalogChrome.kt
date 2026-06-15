@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -45,9 +47,16 @@ import com.library.android.presentation.theme.StacksColors
 import com.library.android.presentation.theme.StacksType
 import com.library.android.presentation.ui.StacksIcons
 
-/** App bar (.appbar): "Stacks." wordmark + a "For you" recommendations entry + avatar. */
+/**
+ * App bar (.appbar): "Stacks." wordmark + a public "For you" entry + an auth-aware account slot
+ * ([accountInitials] = real initials when authenticated, `null` => a "Sign in" affordance).
+ */
 @Composable
-fun StacksAppBar(onRecommendationsClick: () -> Unit = {}) {
+fun StacksAppBar(
+    onRecommendationsClick: () -> Unit = {},
+    accountInitials: String? = null,
+    onAccountClick: () -> Unit = {},
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,17 +85,58 @@ fun StacksAppBar(onRecommendationsClick: () -> Unit = {}) {
                 .clickable(onClick = onRecommendationsClick)
                 .padding(horizontal = 8.dp, vertical = 4.dp),
         )
+        AccountSlot(accountInitials = accountInitials, onClick = onAccountClick)
+    }
+}
+
+/** Auth-aware account slot: real-initials avatar when signed in, otherwise a "Sign in" affordance. */
+@Composable
+private fun AccountSlot(accountInitials: String?, onClick: () -> Unit) {
+    if (accountInitials == null) {
+        Row(
+            modifier = Modifier
+                .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
+                .clip(RoundedCornerShape(999.dp))
+                .clickable(onClick = onClick)
+                .semantics { contentDescription = "Sign in" }
+                .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(
+                imageVector = StacksIcons.NavProfile,
+                contentDescription = null,
+                tint = StacksColors.Pine,
+                modifier = Modifier.size(18.dp),
+            )
+            Text(
+                text = "Sign in",
+                color = StacksColors.Pine,
+                fontFamily = StacksType.Body,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+            )
+        }
+    } else {
         Box(
-            modifier = Modifier.size(32.dp).clip(CircleShape).background(StacksColors.Pine),
+            modifier = Modifier
+                .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
+                .clickable(onClick = onClick)
+                .semantics { contentDescription = "Your profile" },
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = "DK",
-                color = StacksColors.OnAccent,
-                fontFamily = StacksType.Body,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-            )
+            Box(
+                modifier = Modifier.size(32.dp).clip(CircleShape).background(StacksColors.Pine),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = accountInitials,
+                    color = StacksColors.OnAccent,
+                    fontFamily = StacksType.Body,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                )
+            }
         }
     }
 }

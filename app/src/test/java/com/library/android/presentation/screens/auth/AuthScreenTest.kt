@@ -46,7 +46,7 @@ class AuthScreenTest {
 
     @Test
     fun profile_authenticated_showsPrincipal() {
-        val principal = Principal("1", "dana@stacks.app", Role.MEMBER)
+        val principal = Principal("1", "dana@stacks.app", Role.MEMBER, verified = true, active = true)
         composeRule.setContent {
             LibraryTheme { ProfileContent(AuthUiState.Authenticated(principal)) }
         }

@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,13 +43,24 @@ import com.library.android.presentation.ui.StacksIcons
 @Composable
 fun BookDetailScreen(
     onBack: () -> Unit,
+    onLoginClick: () -> Unit = {},
     viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val borrow by viewModel.borrow.collectAsStateWithLifecycle()
+    // One-shot: an anonymous Borrow tap routes to sign-in, then the flag is cleared.
+    LaunchedEffect(borrow.requireLogin) {
+        if (borrow.requireLogin) {
+            onLoginClick()
+            viewModel.loginHandled()
+        }
+    }
     BookDetailContent(
         state = state,
+        borrow = borrow,
         onBack = onBack,
         onRetry = viewModel::load,
+        onBorrow = viewModel::borrow,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -57,8 +69,10 @@ fun BookDetailScreen(
 @Composable
 fun BookDetailContent(
     state: BookDetailUiState,
+    borrow: BorrowUiState = BorrowUiState(),
     onBack: () -> Unit = {},
     onRetry: () -> Unit = {},
+    onBorrow: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
@@ -66,7 +80,7 @@ fun BookDetailContent(
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when (state) {
                 BookDetailUiState.Loading -> DetailLoading()
-                is BookDetailUiState.Content -> BookDetail(state.book)
+                is BookDetailUiState.Content -> BookDetail(state.book, borrow, onBorrow)
                 BookDetailUiState.NotFound ->
                     DetailMessage("Book not found", "We couldn't find that book.")
                 is BookDetailUiState.Error -> DetailError(state.message, onRetry)

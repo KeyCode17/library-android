@@ -39,7 +39,7 @@ import com.library.android.presentation.ui.StacksIcons
 
 /** Book-detail body: scrollable content (.d-scroll) above the pinned actions (.d-actions). */
 @Composable
-fun BookDetail(book: Book) {
+fun BookDetail(book: Book, borrow: BorrowUiState = BorrowUiState(), onBorrow: () -> Unit = {}) {
     Column(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -52,7 +52,7 @@ fun BookDetail(book: Book) {
             DetailsSection(book)
             Spacer(Modifier.height(18.dp))
         }
-        DetailActions()
+        DetailActions(available = book.available, borrow = borrow, onBorrow = onBorrow)
     }
 }
 
@@ -162,37 +162,55 @@ private fun DetailsSection(book: Book) {
 }
 
 /**
- * .d-actions — Borrow (primary) + Reserve. Design chrome only: the contract is read-only, so
- * lending actions are not wired (they arrive with the lending milestone).
+ * .d-actions — Borrow (primary, wired to `POST /loans`) + Reserve. Borrow is disabled when the
+ * book is unavailable or a request is in flight; result/errors surface in [BorrowUiState.message].
+ * Reserve stays visual — the contract has no reservation endpoint (anti-drift).
  */
 @Composable
-private fun DetailActions() {
-    Row(
+private fun DetailActions(available: Boolean, borrow: BorrowUiState, onBorrow: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 18.dp)
             .padding(bottom = 18.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Button(
-            onClick = {},
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = StacksColors.Pine,
-                contentColor = StacksColors.OnAccent,
-            ),
-        ) {
-            Text("Borrow", fontFamily = StacksType.Body, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+        borrow.message?.let { message ->
+            Text(
+                text = message,
+                color = StacksColors.Muted,
+                fontFamily = StacksType.Body,
+                fontSize = 13.sp,
+            )
         }
-        OutlinedButton(
-            onClick = {},
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(10.dp),
-            border = BorderStroke(1.dp, StacksColors.Line),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = StacksColors.Ink),
-        ) {
-            Text("Reserve", fontFamily = StacksType.Body, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                onClick = onBorrow,
+                enabled = available && !borrow.inProgress,
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = StacksColors.Pine,
+                    contentColor = StacksColors.OnAccent,
+                ),
+            ) {
+                val label = when {
+                    borrow.inProgress -> "Borrowing…"
+                    !available -> "On loan"
+                    else -> "Borrow"
+                }
+                Text(label, fontFamily = StacksType.Body, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            }
+            OutlinedButton(
+                onClick = {},
+                enabled = false,
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, StacksColors.Line),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = StacksColors.Ink),
+            ) {
+                Text("Reserve", fontFamily = StacksType.Body, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            }
         }
     }
 }

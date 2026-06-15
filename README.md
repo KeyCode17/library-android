@@ -65,8 +65,20 @@ Lending, chat, recommender, etc. arrive in later milestones (see
   `/auth/me`. Catalog stays **public**.
   - ⚠️ **The auth screens (login / register / profile) are a clean default and need a design
     pass** — there is no `docs/designs/login.html`.
-  - Admin role assignment (`POST /users/{id}/roles`) is **deferred** — not scoped into 0.3.0 by
-    the PRD/FSD (the `AssignRoleRequest` DTO is mirrored from the contract for when it lands).
+- **IAM v2 (account + admin + public flows):**
+  - **Account self-service** (`PATCH`/`DELETE /auth/me`, `POST /auth/change-password`): update
+    email, change password, delete account (confirm dialog), reached from Profile.
+  - **Admin "Manage users"** (`GET/POST /users`, `PATCH`/`DELETE /users/{id}`,
+    `POST /users/{id}/roles`): paginated list, create user, assign role, deactivate, delete.
+    Client-gated on the `/auth/me` role; the **server enforces** the role and last-admin/lockout
+    safeguards regardless. Last-admin/lockout refusals surface inline.
+  - **Password reset** (`POST /auth/forgot-password` → `…/reset-password`): "Forgot password?" on
+    Login → neutral forgot screen → reset screen; the token arrives via **deep link**
+    (`https://stacks.app/reset?token=…` and `library://reset?token=…`) **or** manual entry.
+  - **Email verification** (`POST /auth/verify-email`): token via **deep link**
+    (`…/verify?token=…`) or manual entry; a "verify your email" banner shows when `verified=false`.
+  - ⚠️ **These IAM v2 screens (account / manage-users / forgot / reset / verify) are a clean
+    default and need a design pass** — there are no `docs/designs/` files for them.
 - **Navigation:** Navigation Compose — catalog list → `book/{id}` detail; catalog → profile
   (→ login / register)
 - **DI:** Hilt (network + repository + storage modules)
@@ -79,9 +91,9 @@ Lending, chat, recommender, etc. arrive in later milestones (see
   on custom affordances), Compose perf (`@Immutable` UiStates for stability, keyed lazy lists,
   off-main I/O), and broadened Compose/ViewModel tests incl. a11y assertions.
 
-> **Design note:** most screens (auth, lending, recommendations, chat, reminders, access card,
-> WiFi) are clean defaults with no design file and still need a design pass. Catalog + detail
-> follow `docs/designs/`.
+> **Design note:** most screens (auth, IAM v2 — account / manage-users / forgot / reset / verify,
+> lending, recommendations, chat, reminders, access card, WiFi) are clean defaults with no design
+> file and still need a design pass. Catalog + detail follow `docs/designs/`.
 
 ## Requirements
 

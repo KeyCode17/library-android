@@ -17,7 +17,7 @@ class AuthViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val principal = Principal("1", "dana@stacks.app", Role.MEMBER)
+    private val principal = Principal("1", "dana@stacks.app", Role.MEMBER, verified = true, active = true)
 
     /** Fake auth port — token state is just a boolean; results are configurable per test. */
     private class FakeAuthRepository : AuthRepository {
@@ -43,6 +43,16 @@ class AuthViewModelTest {
             session = false
             logoutCalled = true
         }
+
+        override suspend fun updateEmail(email: String): Result<Principal> =
+            Result.failure(AuthException("unused"))
+        override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun deleteAccount(): Result<Unit> = Result.success(Unit)
+        override suspend fun forgotPassword(email: String): Result<Unit> = Result.success(Unit)
+        override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun verifyEmail(token: String): Result<Unit> = Result.success(Unit)
     }
 
     @Test

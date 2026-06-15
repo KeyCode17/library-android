@@ -1,7 +1,12 @@
 package com.library.android.data.remote
 
 import com.library.android.data.auth.TokenStorage
+import com.library.android.data.remote.dto.ChangePasswordRequestDto
 import com.library.android.data.remote.dto.CredentialsDto
+import com.library.android.data.remote.dto.ForgotPasswordRequestDto
+import com.library.android.data.remote.dto.ResetPasswordRequestDto
+import com.library.android.data.remote.dto.UpdateMeRequestDto
+import com.library.android.data.remote.dto.VerifyEmailRequestDto
 import com.library.android.domain.model.Principal
 import com.library.android.domain.repo.AuthException
 import com.library.android.domain.repo.AuthRepository
@@ -17,6 +22,7 @@ import javax.inject.Singleton
  * HTTP failures are mapped to user-facing [AuthException] messages (typed catches only).
  */
 @Singleton
+@Suppress("TooManyFunctions") // cohesive IAM auth surface (one /auth REST mapper)
 class AuthRemoteRepository @Inject constructor(
     private val api: AuthApi,
     private val tokenStorage: TokenStorage,
@@ -74,6 +80,75 @@ class AuthRemoteRepository @Inject constructor(
     override suspend fun logout() {
         withContext(ioDispatcher) { tokenStorage.clear() }
     }
+
+    override suspend fun updateEmail(email: String): Result<Principal> = withContext(ioDispatcher) {
+        guarded({ code ->
+            when (code) {
+                HTTP_UNAUTHORIZED -> "Sign in to update your email"
+                HTTP_CONFLICT -> "That email is already in use"
+                else -> "Couldn't update your email (code $code)"
+            }
+        }) { api.updateMe(UpdateMeRequestDto(email)).toDomain() }
+    }
+
+    override suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+    ): Result<Unit> = withContext(ioDispatcher) {
+        guarded({ code ->
+            when (code) {
+                HTTP_UNAUTHORIZED -> "Your current password is incorrect"
+                HTTP_BAD_REQUEST -> "New password must be at least 8 characters"
+                else -> "Couldn't change your password (code $code)"
+            }
+        }) { api.changePassword(ChangePasswordRequestDto(currentPassword, newPassword)) }
+    }
+
+    override suspend fun deleteAccount(): Result<Unit> = withContext(ioDispatcher) {
+        guarded({ code ->
+            when (code) {
+                HTTP_UNAUTHORIZED -> "Sign in to delete your account"
+                HTTP_CONFLICT -> "You're the last admin — assign another admin first"
+                else -> "Couldn't delete your account (code $code)"
+            }
+        }) { api.deleteMe() }.onSuccess { tokenStorage.clear() }
+    }
+
+    override suspend fun forgotPassword(email: String): Result<Unit> = withContext(ioDispatcher) {
+        guarded({ code -> "Couldn't send the reset email (code $code)" }) {
+            api.forgotPassword(ForgotPasswordRequestDto(email))
+        }
+    }
+
+    override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+        withContext(ioDispatcher) {
+            guarded({ code ->
+                if (code == HTTP_BAD_REQUEST) {
+                    "That reset link is invalid or expired, or the password is too weak"
+                } else {
+                    "Couldn't reset your password (code $code)"
+                }
+            }) { api.resetPassword(ResetPasswordRequestDto(token, newPassword)) }
+        }
+
+    override suspend fun verifyEmail(token: String): Result<Unit> = withContext(ioDispatcher) {
+        guarded({ code ->
+            if (code == HTTP_BAD_REQUEST) {
+                "That verification link is invalid, expired, or already used"
+            } else {
+                "Couldn't verify your email (code $code)"
+            }
+        }) { api.verifyEmail(VerifyEmailRequestDto(token)) }
+    }
+
+    private inline fun <T> guarded(httpMessage: (Int) -> String, block: () -> T): Result<T> =
+        try {
+            Result.success(block())
+        } catch (e: HttpException) {
+            Result.failure(AuthException(httpMessage(e.code()), e))
+        } catch (e: IOException) {
+            Result.failure(AuthException("Network error — check your connection", e))
+        }
 
     private companion object {
         const val HTTP_BAD_REQUEST = 400

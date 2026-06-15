@@ -28,9 +28,22 @@ class AccessCardViewModelTest {
         override suspend fun register(email: String, password: String): Result<Principal> =
             Result.failure(AuthException("unused"))
         override suspend fun currentUser(): Result<Principal> =
-            if (authenticated) Result.success(Principal("u1", "dana@stacks.app", Role.MEMBER))
-            else Result.failure(AuthException("not authenticated"))
+            if (authenticated) {
+                Result.success(Principal("u1", "dana@stacks.app", Role.MEMBER, verified = true, active = true))
+            } else {
+                Result.failure(AuthException("not authenticated"))
+            }
         override suspend fun logout() = Unit
+
+        override suspend fun updateEmail(email: String): Result<Principal> =
+            Result.failure(AuthException("unused"))
+        override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun deleteAccount(): Result<Unit> = Result.success(Unit)
+        override suspend fun forgotPassword(email: String): Result<Unit> = Result.success(Unit)
+        override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun verifyEmail(token: String): Result<Unit> = Result.success(Unit)
     }
 
     private class FakeQrEncoder(private val result: Result<QrMatrix>) : QrEncoder {

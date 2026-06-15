@@ -5,11 +5,13 @@ import com.library.android.data.remote.CatalogRemoteRepository
 import com.library.android.data.remote.ChatRemoteRepository
 import com.library.android.data.remote.LoanRemoteRepository
 import com.library.android.data.remote.NotificationRemoteRepository
+import com.library.android.data.remote.UserAdminRemoteRepository
 import com.library.android.domain.repo.AuthRepository
 import com.library.android.domain.repo.CatalogRepository
 import com.library.android.domain.repo.ChatRepository
 import com.library.android.domain.repo.LoanRepository
 import com.library.android.domain.repo.NotificationRepository
+import com.library.android.domain.repo.UserAdminRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,8 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         impl: NotificationRemoteRepository,
     ): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserAdminRepository(impl: UserAdminRemoteRepository): UserAdminRepository
 }

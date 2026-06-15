@@ -33,9 +33,38 @@ data class PrincipalDto(
     val id: String, // uuid
     val email: String,
     val role: RoleDto,
+    val verified: Boolean,
+    val active: Boolean,
 )
 
 @Serializable
 data class AssignRoleRequestDto(
     val role: RoleDto,
+)
+
+@Serializable
+data class UpdateMeRequestDto(
+    val email: String,
+)
+
+@Serializable
+data class ChangePasswordRequestDto(
+    @SerialName("current_password") val currentPassword: String,
+    @SerialName("new_password") val newPassword: String,
+)
+
+@Serializable
+data class VerifyEmailRequestDto(
+    val token: String,
+)
+
+@Serializable
+data class ForgotPasswordRequestDto(
+    val email: String,
+)
+
+@Serializable
+data class ResetPasswordRequestDto(
+    val token: String,
+    @SerialName("new_password") val newPassword: String,
 )

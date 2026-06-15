@@ -53,9 +53,19 @@ class LendingViewModelTest {
         override suspend fun register(email: String, password: String): Result<Principal> =
             Result.failure(AuthException("unused"))
         override suspend fun currentUser(): Result<Principal> =
-            role?.let { Result.success(Principal("u1", "u@x.io", it)) }
+            role?.let { Result.success(Principal("u1", "u@x.io", it, verified = true, active = true)) }
                 ?: Result.failure(AuthException("not authenticated"))
         override suspend fun logout() = Unit
+
+        override suspend fun updateEmail(email: String): Result<Principal> =
+            Result.failure(AuthException("unused"))
+        override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun deleteAccount(): Result<Unit> = Result.success(Unit)
+        override suspend fun forgotPassword(email: String): Result<Unit> = Result.success(Unit)
+        override suspend fun resetPassword(token: String, newPassword: String): Result<Unit> =
+            Result.success(Unit)
+        override suspend fun verifyEmail(token: String): Result<Unit> = Result.success(Unit)
     }
 
     private class FakeCatalogRepository(private val books: List<Book>) : CatalogRepository {

@@ -32,6 +32,7 @@ import com.library.android.presentation.theme.StacksType
 fun LoginScreen(
     onLoggedIn: () -> Unit,
     onRegisterClick: () -> Unit,
+    onForgotPassword: () -> Unit,
     onBack: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
@@ -43,6 +44,7 @@ fun LoginScreen(
         state = state,
         onSubmit = viewModel::login,
         onRegisterClick = onRegisterClick,
+        onForgotPassword = onForgotPassword,
         onBack = onBack,
         modifier = Modifier.systemBarsPadding(),
     )
@@ -54,6 +56,7 @@ fun LoginContent(
     state: AuthUiState,
     onSubmit: (String, String) -> Unit,
     onRegisterClick: () -> Unit = {},
+    onForgotPassword: () -> Unit = {},
     onBack: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -91,6 +94,15 @@ fun LoginContent(
             TextButton(onClick = onRegisterClick) {
                 Text(
                     text = "New here? Create an account",
+                    color = StacksColors.Pine,
+                    fontFamily = StacksType.Body,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                )
+            }
+            TextButton(onClick = onForgotPassword) {
+                Text(
+                    text = "Forgot password?",
                     color = StacksColors.Pine,
                     fontFamily = StacksType.Body,
                     fontWeight = FontWeight.Medium,

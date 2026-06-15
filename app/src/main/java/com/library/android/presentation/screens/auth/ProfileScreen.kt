@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,9 +39,7 @@ import com.library.android.presentation.theme.StacksType
 fun ProfileScreen(
     onLogin: () -> Unit,
     onBack: () -> Unit,
-    onReminders: () -> Unit,
-    onAccessCard: () -> Unit,
-    onWifi: () -> Unit,
+    actions: ProfileActions,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,7 +48,7 @@ fun ProfileScreen(
         onLogout = viewModel::logout,
         onLogin = onLogin,
         onBack = onBack,
-        actions = ProfileActions(onReminders, onAccessCard, onWifi),
+        actions = actions,
         modifier = Modifier.systemBarsPadding(),
     )
 }
@@ -58,6 +58,9 @@ data class ProfileActions(
     val onReminders: () -> Unit = {},
     val onAccessCard: () -> Unit = {},
     val onWifi: () -> Unit = {},
+    val onAccount: () -> Unit = {},
+    val onManageUsers: () -> Unit = {},
+    val onVerifyEmail: () -> Unit = {},
 )
 
 /** Pure, previewable profile UI. */
@@ -120,11 +123,16 @@ private fun AuthenticatedProfile(
             fontFamily = StacksType.Mono,
             fontSize = 13.sp,
         )
-        val navActions = listOf(
-            "Reminders" to actions.onReminders,
-            "Access card" to actions.onAccessCard,
-            "Library WiFi" to actions.onWifi,
-        )
+        if (!principal.verified) {
+            UnverifiedBanner(onVerify = actions.onVerifyEmail)
+        }
+        val navActions = buildList {
+            add("Reminders" to actions.onReminders)
+            add("Access card" to actions.onAccessCard)
+            add("Library WiFi" to actions.onWifi)
+            add("Account settings" to actions.onAccount)
+            if (principal.role == Role.ADMIN) add("Manage users" to actions.onManageUsers)
+        }
         navActions.forEachIndexed { index, (label, onClick) ->
             AuthPrimaryButton(
                 text = label,
@@ -134,6 +142,30 @@ private fun AuthenticatedProfile(
             )
         }
         AuthPrimaryButton(text = "Log out", enabled = true, onClick = onLogout)
+    }
+}
+
+/** Banner shown when the signed-in user's email is unverified. */
+@Composable
+private fun UnverifiedBanner(onVerify: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(StacksColors.Brass100)
+            .padding(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = "Please verify your email to secure your account.",
+            color = StacksColors.Brass700,
+            fontFamily = StacksType.Body,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center,
+        )
+        AuthPrimaryButton(text = "Verify email", enabled = true, onClick = onVerify)
     }
 }
 
@@ -175,7 +207,9 @@ private fun roleLabel(role: Role): String =
 private fun ProfileAuthenticatedPreview() {
     LibraryTheme {
         ProfileContent(
-            AuthUiState.Authenticated(Principal("1", "dana@stacks.app", Role.MEMBER)),
+            AuthUiState.Authenticated(
+                Principal("1", "dana@stacks.app", Role.MEMBER, verified = true, active = true),
+            ),
         )
     }
 }

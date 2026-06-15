@@ -28,6 +28,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Password-reset / email-verify deep links (App Links + custom scheme). The
+                 NavHost matches /reset and /verify (with ?token=) to the right screen. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="stacks.app" android:pathPrefix="/reset" />
+                <data android:pathPrefix="/verify" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="library" android:host="reset" />
+                <data android:scheme="library" android:host="verify" />
+            </intent-filter>
         </activity>
 
         <!-- Ask Play services to install the barcode scanner module on demand. -->

@@ -24,7 +24,8 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
   and **library WiFi provisioning** via `WifiNetworkSuggestion` (API 29+, graceful degradation
   below). Both behind ports (`QrEncoder` = ZXing, `WifiProvisioner` = WifiManager) with fakes in
   tests; real adapters are instrumented/manual.
-  - ⚠️ **These screens are a clean default and need a design pass** (no design files).
+  - These screens are designed (`docs/designs/access-card.html`, `wifi.html`) and the Compose
+    screens are conformed to the design system.
   - The library WiFi credentials are a **placeholder** — real SSID/passphrase come from config at
     deployment.
 - **Notifications (FCM + reminders):** registers the device's FCM token
@@ -35,13 +36,13 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
     `google-services.json` + the `com.google.gms.google-services` Gradle plugin. **Neither is in
     the default build**: the app compiles and the pre-push gate passes WITHOUT them (FCM is inert
     until configured). Tracked, like other external-service creds.
-  - ⚠️ **The reminders screen is a clean default and needs a design pass.** Real FCM receipt is a
-    manual/instrumented concern, not the JVM gate.
+  - The reminders screen is designed (`docs/designs/reminders.html`) and conformed. Real FCM
+    receipt is a manual/instrumented concern, not the JVM gate.
 - **Chat (group, real-time):** room history over REST (`GET /chat/rooms/{room}/messages`) plus a
   live **WebSocket** (`/ws/chat?room=&token=<jwt>`, OkHttp) behind a `ChatSocket` port (real
   adapter for prod; fake in tests). Room selector (ask-a-librarian / book-category / event);
   send `ChatSend`, append incoming `ChatMessage`. Auth required (gated "Chat" tab).
-  - ⚠️ **The chat screen is a clean default and needs a design pass** — no chat design file.
+  - The chat screen is designed (`docs/designs/chat.html`) and conformed.
   - The real OkHttp socket adapter is exercised by a **CI-only instrumented test**; the JVM gate
     uses the fake socket.
 - **Recommendations (on-device):** ranks catalog candidates with the Rust recommender running
@@ -52,12 +53,12 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
     backend's `build.sh` — do **not** hand-edit the generated `.kt`. JNA (`jna:…@aar`) is the
     runtime. The real binding is exercised by a **CI-only instrumented test** (the native `.so`
     can't load under Robolectric); the JVM gate uses the fake.
-  - ⚠️ **The recommendations screen is a clean default and needs a design pass.**
+  - The recommendations screen is designed (`docs/designs/recommend.html`) and conformed.
 - **Lending:** borrow / return / my-loans (`GET /loans`) over REST with the bearer token; a
   gated "Borrowed" screen shows status + due date; staff (librarian/admin, from `/auth/me`) see
   an **Approve** action (hidden for members; server enforces regardless). **Borrow-by-scan**
   (ML Kit code scanner) behind a `BarcodeScanner` port (faked in tests).
-  - ⚠️ **The lending screen is a clean default and needs a design pass** — no lending design file.
+  - The lending screen is designed (`docs/designs/lending.html`) and conformed.
   - The scanner reads an **ISBN**, resolved to a book **server-side** via the catalog finder
     (`GET /books?isbn=`), then borrowed. (Earlier client-side first-page matching was replaced.)
   - The catalog-detail **Borrow** button is wired (`POST /loans`): it reflects availability and
@@ -65,8 +66,8 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
 - **Auth (IAM):** register / login / logout over REST; JWT in `EncryptedSharedPreferences`
   attached as `Authorization: Bearer` via an OkHttp interceptor; a gated Profile screen reads
   `/auth/me`. Catalog stays **public**.
-  - ⚠️ **The auth screens (login / register / profile) are a clean default and need a design
-    pass** — there is no `docs/designs/login.html`.
+  - The auth screens are designed (`docs/designs/login.html`, `register.html`, `profile.html`)
+    and conformed to the design system.
 - **IAM v2 (account + admin + public flows):**
   - **Account self-service** (`PATCH`/`DELETE /auth/me`, `POST /auth/change-password`): update
     email, change password, delete account (confirm dialog), reached from Profile.
@@ -79,8 +80,8 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
     (`https://stacks.app/reset?token=…` and `library://reset?token=…`) **or** manual entry.
   - **Email verification** (`POST /auth/verify-email`): token via **deep link**
     (`…/verify?token=…`) or manual entry; a "verify your email" banner shows when `verified=false`.
-  - ⚠️ **These IAM v2 screens (account / manage-users / forgot / reset / verify) are a clean
-    default and need a design pass** — there are no `docs/designs/` files for them.
+  - These IAM v2 screens are designed (`docs/designs/account.html`, `manage-users.html`,
+    `forgot-password.html`, `reset-password.html`, `verify-email.html`) and conformed.
 - **Navigation:** Navigation Compose — catalog list → `book/{id}` detail; catalog → profile
   (→ login / register)
 - **DI:** Hilt (network + repository + storage modules)
@@ -93,9 +94,12 @@ in later milestones (see `docs/plan/001-implementation-plan-android.md`).
   on custom affordances), Compose perf (`@Immutable` UiStates for stability, keyed lazy lists,
   off-main I/O), and broadened Compose/ViewModel tests incl. a11y assertions.
 
-> **Design note:** most screens (auth, IAM v2 — account / manage-users / forgot / reset / verify,
-> lending, recommendations, chat, reminders, access card, WiFi) are clean defaults with no design
-> file and still need a design pass. Catalog + detail follow `docs/designs/`.
+> **Design:** every screen has a mockup in `docs/designs/` — a shared `kit.css` (tokens +
+> components extracted from `catalog.html` / `catalog-detail.html`) keeps the set one product, and
+> the Compose screens are conformed to them (layout, spacing, type scale, color tokens, component
+> breakdown, states). Final on-device **pixel** verification — install on a GPU-capable emulator or
+> Android Studio and compare each screen to its `docs/designs/<screen>.html` — is a manual QA step
+> (this CI/headless environment has no GPU, so it can't run the emulator).
 
 ## Requirements
 

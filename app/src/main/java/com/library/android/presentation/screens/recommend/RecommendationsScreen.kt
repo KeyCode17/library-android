@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions") // Compose screen: many small, previewable composables
+
 package com.library.android.presentation.screens.recommend
 
 import androidx.compose.foundation.background
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,6 +74,7 @@ fun RecommendationsContent(
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
         AuthTopBar("For you", onBack)
+        ScreenSubtitle("Ranked on-device from your reading.")
         PreferencesForm(onRecommend)
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when (state) {
@@ -84,6 +88,34 @@ fun RecommendationsContent(
             }
         }
     }
+}
+
+/** The `.sub` lead-in line under the app bar. */
+@Composable
+private fun ScreenSubtitle(text: String) {
+    Text(
+        text = text,
+        color = StacksColors.Muted,
+        fontFamily = StacksType.Body,
+        fontSize = 14.sp,
+        modifier = Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, bottom = 8.dp),
+    )
+}
+
+/** The `.sectit` uppercase section label above the ranked list. */
+@Composable
+private fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        color = StacksColors.Muted,
+        fontFamily = StacksType.Body,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp,
+        letterSpacing = 0.07.em,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 18.dp, end = 18.dp, top = 2.dp),
+    )
 }
 
 @Composable
@@ -147,13 +179,16 @@ private fun PreferencesForm(onRecommend: (RecommendationPreferences) -> Unit) {
 
 @Composable
 private fun RankedList(books: List<Book>, onBookClick: (String) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        items(books, key = { it.id }) { book ->
-            BookRow(book = book, onClick = { onBookClick(book.id) })
+    Column(Modifier.fillMaxSize()) {
+        SectionTitle("RECOMMENDED FOR YOU")
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(books, key = { it.id }) { book ->
+                BookRow(book = book, onClick = { onBookClick(book.id) })
+            }
         }
     }
 }

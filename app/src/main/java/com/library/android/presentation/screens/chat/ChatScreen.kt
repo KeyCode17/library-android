@@ -91,12 +91,17 @@ private fun MessagesList(messages: List<ChatMessage>) {
         }
         return
     }
+    // No current-user id reaches the UI (UiState is fixed), so derive sides from the thread:
+    // the first/originating sender is "them" (incoming); any other sender is "me" (outgoing).
+    val originator = messages.first().userId
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        items(messages, key = { it.id }) { message -> MessageRow(message) }
+        items(messages, key = { it.id }) { message ->
+            MessageRow(message, isMine = message.userId != originator)
+        }
     }
 }
 

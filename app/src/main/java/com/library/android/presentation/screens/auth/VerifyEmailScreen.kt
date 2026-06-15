@@ -5,15 +5,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +79,17 @@ class VerifyEmailViewModel @Inject constructor(
     }
 }
 
+// Circled check from the design's verified-state SVG (circle r9 + check path, stroke-width 2).
+// Drawn locally because the shared StacksIcons set has no check glyph and is not editable here.
+private val VerifiedCheck: ImageVector =
+    ImageVector.Builder("VerifiedCheck", 24.dp, 24.dp, 24f, 24f).addPath(
+        pathData = addPathNodes("M3 12a9 9 0 1018 0 9 9 0 10-18 0z M8.5 12.5l2.5 2.5 4.5-5"),
+        stroke = SolidColor(Color.Black),
+        strokeLineWidth = 2f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    ).build()
+
 @Composable
 fun VerifyEmailScreen(
     onBack: () -> Unit,
@@ -91,40 +113,83 @@ fun VerifyEmailContent(
     onBack: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    var token by remember(initialToken) { mutableStateOf(initialToken) }
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
         AuthTopBar("Verify email", onBack)
-        Column(
-            modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            when (state) {
-                VerifyEmailUiState.Verified -> Text(
-                    text = "Your email is verified. Thanks!",
-                    color = StacksColors.Ink,
-                    fontFamily = StacksType.Display,
-                    fontSize = 18.sp,
-                )
-                VerifyEmailUiState.Verifying -> CircularProgressIndicator(color = StacksColors.Pine)
-                else -> {
-                    Text(
-                        text = "Paste the code from your verification email.",
-                        color = StacksColors.Muted,
-                        fontFamily = StacksType.Body,
-                        fontSize = 14.sp,
-                    )
-                    AuthTextField(token, { token = it }, "Verification code")
-                    if (state is VerifyEmailUiState.Error) {
-                        AuthErrorText(state.message)
-                    }
-                    AuthPrimaryButton(
-                        text = "Verify",
-                        enabled = token.isNotBlank(),
-                        onClick = { onVerify(token) },
-                    )
-                }
-            }
+        when (state) {
+            VerifyEmailUiState.Verified -> VerifiedState()
+            VerifyEmailUiState.Verifying -> VerifyingState()
+            else -> ManualEntry(
+                state = state,
+                initialToken = initialToken,
+                onVerify = onVerify,
+            )
         }
+    }
+}
+
+/** Centered confirmation — mirrors the design's `.empty` state (pine check + h2 thanks). */
+@Composable
+private fun VerifiedState() {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = VerifiedCheck,
+            contentDescription = null,
+            tint = StacksColors.Pine,
+            modifier = Modifier.size(44.dp).padding(bottom = 8.dp),
+        )
+        Text(
+            text = "Your email is verified. Thanks!",
+            color = StacksColors.Ink,
+            fontFamily = StacksType.Display,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun VerifyingState() {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        CircularProgressIndicator(color = StacksColors.Pine)
+    }
+}
+
+/** Manual code entry — sub text + "Verification code" field + "Verify" button. */
+@Composable
+private fun ManualEntry(
+    state: VerifyEmailUiState,
+    initialToken: String,
+    onVerify: (String) -> Unit,
+) {
+    var token by remember(initialToken) { mutableStateOf(initialToken) }
+    Column(
+        modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Text(
+            text = "Paste the code from your verification email.",
+            color = StacksColors.Muted,
+            fontFamily = StacksType.Body,
+            fontSize = 14.sp,
+        )
+        AuthTextField(token, { token = it }, "Verification code")
+        if (state is VerifyEmailUiState.Error) {
+            AuthErrorText(state.message)
+        }
+        AuthPrimaryButton(
+            text = "Verify",
+            enabled = token.isNotBlank(),
+            onClick = { onVerify(token) },
+        )
     }
 }
 
@@ -132,4 +197,10 @@ fun VerifyEmailContent(
 @Composable
 private fun VerifyEmailPreview() {
     LibraryTheme { VerifyEmailContent(VerifyEmailUiState.Idle) }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun VerifyEmailVerifiedPreview() {
+    LibraryTheme { VerifyEmailContent(VerifyEmailUiState.Verified) }
 }

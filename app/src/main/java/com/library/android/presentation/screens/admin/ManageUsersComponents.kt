@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -46,26 +49,43 @@ fun UserRow(
             .clip(shape)
             .background(StacksColors.Surface)
             .border(1.dp, StacksColors.Line, shape)
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(14.dp),
     ) {
         Text(
             text = user.email,
             color = StacksColors.Ink,
-            fontFamily = StacksType.Body,
-            fontWeight = FontWeight.Medium,
-            fontSize = 15.sp,
+            fontFamily = StacksType.Display,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        Spacer(Modifier.height(8.dp))
         UserBadges(user)
+        Spacer(Modifier.height(10.dp))
         RoleChips(current = user.role, onAssignRole = onAssignRole)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Spacer(Modifier.height(12.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             TextButton(onClick = { onToggleActive(!user.active) }) {
-                Text(if (user.active) "Deactivate" else "Activate", color = StacksColors.Pine, fontSize = 13.sp)
+                Text(
+                    text = if (user.active) "Deactivate" else "Activate",
+                    color = StacksColors.Pine,
+                    fontFamily = StacksType.Body,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                )
             }
             TextButton(onClick = onDelete) {
-                Text("Delete", color = StacksColors.Brass700, fontSize = 13.sp)
+                Text(
+                    text = "Delete",
+                    color = MaterialTheme.colorScheme.error,
+                    fontFamily = StacksType.Body,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                )
             }
         }
     }
@@ -91,7 +111,7 @@ private fun Badge(label: String, foreground: Color, background: Color) {
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
             .background(background)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(horizontal = 9.dp, vertical = 3.dp),
     )
 }
 
@@ -118,26 +138,35 @@ fun RoleChips(current: Role, onAssignRole: (Role) -> Unit) {
     }
 }
 
-/** Collapsible "create user" form. */
+/** "Create user" card: email + password + role chips + submit. */
 @Composable
 fun CreateUserForm(onCreate: (String, String, Role) -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var role by remember { mutableStateOf(Role.MEMBER) }
+    val shape = RoundedCornerShape(10.dp)
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(StacksColors.Surface)
+            .border(1.dp, StacksColors.Line, shape)
+            .padding(14.dp),
     ) {
         Text(
             text = "New user",
             color = StacksColors.Ink,
             fontFamily = StacksType.Display,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
         )
+        Spacer(Modifier.height(12.dp))
         AuthTextField(email, { email = it }, "Email")
+        Spacer(Modifier.height(10.dp))
         AuthTextField(password, { password = it }, "Password", isPassword = true)
+        Spacer(Modifier.height(12.dp))
         RoleChips(current = role, onAssignRole = { role = it })
+        Spacer(Modifier.height(14.dp))
         AuthPrimaryButton(
             text = "Create user",
             enabled = email.isNotBlank() && password.length >= MIN_PASSWORD,

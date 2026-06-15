@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Verify Email (Android design)</title>
+<!-- DESIGN SPEC: auth verify-email. Two states — manual code entry + verified confirmation. Maps to VerifyEmailScreen.kt (VerifyEmailContent). -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+</head><body>
+
+<!-- (1) Manual entry -->
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back">
+    <a class="backbtn">‹ Back</a>
+    <span class="title">Verify email</span>
+  </header>
+  <p class="sub" style="padding:0 24px 8px">Paste the code from your verification email.</p>
+  <form class="form">
+    <div class="field">
+      <label for="code">Verification code</label>
+      <input class="input" id="code" name="code" placeholder="Enter verification code">
+    </div>
+    <button class="btn primary block" type="button">Verify</button>
+  </form>
+</div>
+
+<!-- (2) Verified -->
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back">
+    <a class="backbtn">‹ Back</a>
+    <span class="title">Verify email</span>
+  </header>
+  <div class="empty">
+    <svg class="ei" style="color:var(--pine)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>
+    </svg>
+    <h2 class="h2">Your email is verified. Thanks!</h2>
+  </div>
+</div>
+
+</body></html>

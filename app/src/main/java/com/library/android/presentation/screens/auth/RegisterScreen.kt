@@ -4,18 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +48,7 @@ fun RegisterScreen(
     )
 }
 
-/** Pure, previewable register form. Clean default — auth screens need a design pass. */
+/** Pure, previewable register form, conformed to docs/designs/register.html. */
 @Composable
 fun RegisterContent(
     state: AuthUiState,
@@ -62,13 +66,22 @@ fun RegisterContent(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(
-                text = "Join the library — at least 8 characters for your password",
+                text = "Sign yourself up to browse the catalog and borrow books. " +
+                    "Just an email and a password — at least 8 characters.",
                 color = StacksColors.Muted,
                 fontFamily = StacksType.Body,
                 fontSize = 14.sp,
             )
             AuthTextField(email, { email = it }, "Email")
-            AuthTextField(password, { password = it }, "Password", isPassword = true)
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                AuthTextField(password, { password = it }, "Password", isPassword = true)
+                Text(
+                    text = "Use 8 or more characters.",
+                    color = StacksColors.Muted,
+                    fontFamily = StacksType.Body,
+                    fontSize = 13.sp,
+                )
+            }
             if (state is AuthUiState.Error) {
                 AuthErrorText(state.message)
             }
@@ -83,6 +96,20 @@ fun RegisterContent(
                     modifier = Modifier.testTag(AuthTestTags.LOADING),
                 )
             }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TextButton(onClick = onBack) {
+                    Text(
+                        text = "Already have an account? Log in",
+                        color = StacksColors.Pine,
+                        fontFamily = StacksType.Body,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                    )
+                }
+            }
         }
     }
 }
@@ -93,4 +120,12 @@ private const val MIN_PASSWORD = 8
 @Composable
 private fun RegisterContentPreview() {
     LibraryTheme { RegisterContent(AuthUiState.Anonymous, onSubmit = { _, _ -> }) }
+}
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun RegisterErrorPreview() {
+    LibraryTheme {
+        RegisterContent(AuthUiState.Error("Email already in use"), onSubmit = { _, _ -> })
+    }
 }

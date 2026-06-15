@@ -91,16 +91,19 @@ fun ResetPasswordContent(
     var password by remember { mutableStateOf("") }
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
         AuthTopBar("Set a new password", onBack)
+        // .sub — own padding (0 24px 8px), sits outside the form's gap flow.
+        Text(
+            text = "Paste the code from your reset email and choose a new password.",
+            color = StacksColors.Muted,
+            fontFamily = StacksType.Body,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(horizontal = 24.dp).padding(bottom = 8.dp),
+        )
+        // .form — padding 8px 24px, gap 14px.
         Column(
-            modifier = Modifier.padding(horizontal = 24.dp).padding(top = 8.dp),
+            modifier = Modifier.padding(horizontal = 24.dp).padding(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Text(
-                text = "Paste the code from your reset email and choose a new password.",
-                color = StacksColors.Muted,
-                fontFamily = StacksType.Body,
-                fontSize = 14.sp,
-            )
             AuthTextField(token, { token = it }, "Reset code")
             AuthTextField(password, { password = it }, "New password", isPassword = true)
             if (state.error != null) {

@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — For you (Android design)</title>
+<!-- DESIGN SPEC: mobile "For you" recommendations. Reuses catalog .row pattern (cover + title + author + .avail + .shelf-tab). Map to Compose: RecommendationsContent → RankedList of BookRow. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+</head><body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back"><a class="backbtn">‹ Back</a><span class="title">For you</span></header>
+  <p class="sub" style="padding:0 18px 8px">Ranked on-device from your reading.</p>
+  <div class="sectit" style="padding:2px 18px 0">Recommended for you</div>
+  <main class="list" style="padding-top:12px">
+
+    <article class="card rowflex">
+      <div class="cover" style="background:#2C5949;width:62px;flex:none"><div class="ct">The Left Hand of Darkness</div></div>
+      <div class="rbody" style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div class="ct">The Left Hand of Darkness</div>
+        <div class="cs">Ursula K. Le Guin</div>
+        <div class="rmeta" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <span class="avail in"><span class="d"></span>Available</span>
+          <span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R12</span>·3</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="card rowflex">
+      <div class="cover" style="background:#1F4034;width:62px;flex:none"><div class="ct">The Order of Time</div></div>
+      <div class="rbody" style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div class="ct">The Order of Time</div>
+        <div class="cs">Carlo Rovelli</div>
+        <div class="rmeta" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <span class="avail in"><span class="d"></span>Available</span>
+          <span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R19</span>·2</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="card rowflex">
+      <div class="cover" style="background:#3A4A6B;width:62px;flex:none"><div class="ct">Gödel, Escher, Bach</div></div>
+      <div class="rbody" style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div class="ct">Gödel, Escher, Bach</div>
+        <div class="cs">Douglas Hofstadter</div>
+        <div class="rmeta" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <span class="avail in"><span class="d"></span>Available</span>
+          <span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R21</span>·5</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="card rowflex">
+      <div class="cover" style="background:#6B3B52;width:62px;flex:none"><div class="ct">Pale Fire</div></div>
+      <div class="rbody" style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div class="ct">Pale Fire</div>
+        <div class="cs">Vladimir Nabokov</div>
+        <div class="rmeta" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <span class="avail out"><span class="d"></span>Borrowed</span>
+          <span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R08</span>·1</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="card rowflex">
+      <div class="cover" style="background:#8A6730;width:62px;flex:none"><div class="ct">A Pattern Language</div></div>
+      <div class="rbody" style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div class="ct">A Pattern Language</div>
+        <div class="cs">Christopher Alexander</div>
+        <div class="rmeta" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <span class="avail in"><span class="d"></span>Available</span>
+          <span class="shelf-tab"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg><span class="sl">R31</span>·1</span>
+        </div>
+      </div>
+    </article>
+
+  </main>
+  <nav class="bottomnav"><a class=""><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>Catalog</a><a class=""><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v14H4z M4 9h16"/></svg>Borrowed</a><a class=""><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 4h16v11H7l-3 3z"/></svg>Chat</a><a class="on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm-7 8a7 7 0 0114 0z"/></svg>Profile</a></nav>
+</div></body></html>

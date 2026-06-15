@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Profile (Android design)</title>
+<!-- DESIGN SPEC: Android Profile screen. Two states: Authenticated + Signed-out.
+     Maps to ProfileScreen.kt (AuthUiState.Authenticated / AuthUiState.Anonymous).
+     Uses ONLY kit.css classes. Compose: AuthTopBar + centered Column of full-width buttons. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+</head><body>
+
+<!-- ====================== (1) AUTHENTICATED ====================== -->
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back">
+    <a class="backbtn">‹ Back</a>
+    <span class="title">Profile</span>
+  </header>
+  <div class="scroll">
+    <div class="empty" style="justify-content:flex-start;padding-top:32px;gap:6px">
+      <span class="sub">Signed in as</span>
+      <span class="h1">dana@stacks.app</span>
+      <span class="sub mono">Role: Member</span>
+    </div>
+
+    <div class="banner" style="flex-direction:column;align-items:stretch;gap:10px;margin-top:8px">
+      <span class="bt" style="text-align:center">Please verify your email to secure your account.</span>
+      <button class="btn primary">Verify email</button>
+    </div>
+
+    <div class="form" style="gap:10px">
+      <button class="btn block">Reminders</button>
+      <button class="btn block">Access card</button>
+      <button class="btn block">Library WiFi</button>
+      <button class="btn block">Account settings</button>
+      <button class="btn block">Manage users</button>
+      <button class="btn block">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== (2) SIGNED-OUT ====================== -->
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back">
+    <a class="backbtn">‹ Back</a>
+    <span class="title">Profile</span>
+  </header>
+  <div class="empty">
+    <span class="h2">You're signed out</span>
+    <span class="sub">Sign in to view your profile.</span>
+    <button class="btn primary" style="margin-top:8px">Log in</button>
+  </div>
+</div>
+
+</body></html>

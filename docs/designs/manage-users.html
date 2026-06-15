@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks — Manage Users (Android design)</title>
+<!-- DESIGN SPEC: admin manage-users. New-user create card + user rows (badges, role seg, deactivate/delete). Map to Compose: LazyColumn of cards. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+</head><body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>● ▆ ▣</span></div>
+  <header class="appbar back">
+    <a class="backbtn">‹ Back</a>
+    <span class="title">Manage users</span>
+  </header>
+  <main class="list">
+
+    <article class="card">
+      <div class="h2">New user</div>
+      <input class="input" type="email" placeholder="Email" style="margin-top:12px">
+      <input class="input" type="password" placeholder="Password" style="margin-top:10px">
+      <div class="seg" style="margin-top:12px">
+        <button class="chip on">member</button>
+        <button class="chip">librarian</button>
+        <button class="chip">admin</button>
+      </div>
+      <button class="btn primary block" style="margin-top:14px">Create user</button>
+    </article>
+
+    <article class="card">
+      <div class="ct">ada@stacks.app</div>
+      <div class="seg" style="margin-top:8px">
+        <span class="badge role">admin</span>
+        <span class="badge ok">verified</span>
+      </div>
+      <div class="seg" style="margin-top:10px">
+        <button class="chip">member</button>
+        <button class="chip">librarian</button>
+        <button class="chip on">admin</button>
+      </div>
+      <div class="rowflex" style="margin-top:12px">
+        <a class="link">Deactivate</a>
+        <a class="link" style="color:var(--danger)">Delete</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="ct">mem@stacks.app</div>
+      <div class="seg" style="margin-top:8px">
+        <span class="badge role">member</span>
+        <span class="badge off">inactive</span>
+      </div>
+      <div class="seg" style="margin-top:10px">
+        <button class="chip on">member</button>
+        <button class="chip">librarian</button>
+        <button class="chip">admin</button>
+      </div>
+      <div class="rowflex" style="margin-top:12px">
+        <a class="link">Activate</a>
+        <a class="link" style="color:var(--danger)">Delete</a>
+      </div>
+    </article>
+
+  </main>
+</div></body></html>

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -74,40 +75,84 @@ fun AccessCardContent(
     }
 }
 
+@Suppress("LongMethod") // declarative Compose card hero; one cohesive membership layout
 @Composable
 private fun AccessCard(state: AccessCardUiState.Ready) {
     Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(StacksColors.Surface)
-            .border(1.dp, StacksColors.Line, RoundedCornerShape(16.dp))
-            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = 300.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(StacksColors.Surface)
+                .border(1.dp, StacksColors.Line, RoundedCornerShape(10.dp))
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(
+                text = "Library access card",
+                color = StacksColors.Muted,
+                fontFamily = StacksType.Body,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                letterSpacing = 0.84.sp,
+                textAlign = TextAlign.Center,
+            )
+            // The /auth/me principal is shown as the member identity here.
+            Text(
+                text = state.email,
+                color = StacksColors.Ink,
+                fontFamily = StacksType.Display,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+            )
+            MemberBadge()
+            QrImage(
+                state.qr,
+                Modifier
+                    .size(188.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .border(8.dp, Color.White, RoundedCornerShape(10.dp))
+                    .testTag(AccessCardTestTags.QR),
+            )
+            Text(
+                text = "ID ${state.membershipId}",
+                color = StacksColors.Muted,
+                fontFamily = StacksType.Mono,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
         Text(
-            text = "Library access card",
+            text = "Show this at the library desk to check out.",
             color = StacksColors.Muted,
             fontFamily = StacksType.Body,
-            fontWeight = FontWeight.Medium,
-            fontSize = 12.sp,
-        )
-        QrImage(state.qr, Modifier.size(220.dp).background(Color.White).testTag(AccessCardTestTags.QR))
-        Text(
-            text = state.email,
-            color = StacksColors.Ink,
-            fontFamily = StacksType.Display,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
+            fontSize = 13.sp,
             textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "ID ${state.membershipId}",
-            color = StacksColors.Muted,
-            fontFamily = StacksType.Mono,
-            fontSize = 12.sp,
+            modifier = Modifier.widthIn(max = 260.dp),
         )
     }
+}
+
+/** Brass "Member" role badge — matches the design kit `.badge.role` pill. */
+@Composable
+private fun MemberBadge() {
+    Text(
+        text = "Member",
+        color = StacksColors.Brass700,
+        fontFamily = StacksType.Body,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        modifier = Modifier
+            .clip(RoundedCornerShape(percent = 50))
+            .background(StacksColors.Brass100)
+            .padding(horizontal = 9.dp, vertical = 3.dp),
+    )
 }
 
 @Composable

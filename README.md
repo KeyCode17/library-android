@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 1.1.0 · **Status:** v1.1.0 — IAM v2: admin Manage Users, account self-service, and password-reset/email-verification screens (deep links). Full feature set (catalog, auth, lending, on-device recommender, chat, notifications, device features). _Deployment: FCM needs a real Firebase config._
+**Version:** 1.2.0 · **Status:** v1.2.0 — completeness: Room offline catalog cache, `?q=` search, wired catalog-detail Borrow, and a design pass over every screen. Full feature set (catalog, auth, lending, on-device recommender, chat, notifications, device features). _Deployment: FCM needs a real Firebase config._
 
 ## What's built
 

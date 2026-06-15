@@ -2,7 +2,7 @@
 
 Native Android client for the Library project (Kotlin + Jetpack Compose).
 
-**Version:** 1.0.0 · **Status:** v1.0.0 — ready to deploy/live. Full feature set (catalog, auth, lending, on-device recommender, chat, notifications, device features). _Deployment: FCM needs a real Firebase config._
+**Version:** 1.0.1 · **Status:** v1.0.1 — patch: 16 KB native-lib alignment (JNA 5.17.0) + auth-aware catalog top bar (real "Sign in"/initials, "For you" gated on sign-in). Full feature set (catalog, auth, lending, on-device recommender, chat, notifications, device features). _Deployment: FCM needs a real Firebase config._
 
 ## What's built
 

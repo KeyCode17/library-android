@@ -27,8 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.library.android.domain.model.Book
+import com.library.android.presentation.screens.auth.AuthUiState
+import com.library.android.presentation.screens.auth.AuthViewModel
 import com.library.android.presentation.theme.LibraryTheme
 import com.library.android.presentation.theme.StacksColors
 import com.library.android.presentation.theme.StacksType
@@ -38,13 +42,20 @@ import com.library.android.presentation.theme.StacksType
 fun CatalogScreen(
     onBookClick: (String) -> Unit,
     onProfileClick: () -> Unit,
+    onLoginClick: () -> Unit,
     onBorrowedClick: () -> Unit,
     onRecommendationsClick: () -> Unit,
     onChatClick: () -> Unit,
     viewModel: CatalogViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val filter by viewModel.filter.collectAsStateWithLifecycle()
+    val authState by authViewModel.state.collectAsStateWithLifecycle()
+    // Re-derive the session on resume so a login on the Profile screen shows up here.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { authViewModel.refreshSession() }
+
+    val authenticated = authState as? AuthUiState.Authenticated
     CatalogContent(
         state = state,
         filter = filter,
@@ -56,9 +67,15 @@ fun CatalogScreen(
         onBorrowedClick = onBorrowedClick,
         onRecommendationsClick = onRecommendationsClick,
         onChatClick = onChatClick,
+        accountInitials = authenticated?.let { avatarInitials(it.principal.email) },
+        onAccountClick = if (authenticated != null) onProfileClick else onLoginClick,
         modifier = Modifier.systemBarsPadding(),
     )
 }
+
+/** 1–2 uppercase letters/digits from an email's local part for the avatar (e.g. dana@… -> "DA"). */
+internal fun avatarInitials(email: String): String =
+    email.substringBefore('@').filter { it.isLetterOrDigit() }.take(2).uppercase().ifEmpty { "?" }
 
 /** Pure, previewable catalog UI: chrome + finder + the current [CatalogUiState]. */
 @Composable
@@ -73,10 +90,16 @@ fun CatalogContent(
     onBorrowedClick: () -> Unit = {},
     onRecommendationsClick: () -> Unit = {},
     onChatClick: () -> Unit = {},
+    accountInitials: String? = null,
+    onAccountClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().background(StacksColors.Bg)) {
-        StacksAppBar(onRecommendationsClick = onRecommendationsClick)
+        StacksAppBar(
+            onRecommendationsClick = onRecommendationsClick,
+            accountInitials = accountInitials,
+            onAccountClick = onAccountClick,
+        )
         CatalogSearchBar()
         CatalogFinderBar(filter = filter, onApply = onApplyFinder, onClear = onClearFinder)
         FilterChipsRow()

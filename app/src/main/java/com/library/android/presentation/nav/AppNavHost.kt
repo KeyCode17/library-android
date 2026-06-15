@@ -36,6 +36,7 @@ private fun NavGraphBuilder.catalogDestinations(navController: NavHostController
         CatalogScreen(
             onBookClick = { id -> navController.navigate(Routes.bookDetail(id)) },
             onProfileClick = { navController.navigate(Routes.PROFILE) },
+            onLoginClick = { navController.navigate(Routes.LOGIN) },
             onBorrowedClick = { navController.navigate(Routes.LENDING) },
             onRecommendationsClick = { navController.navigate(Routes.RECOMMENDATIONS) },
             onChatClick = { navController.navigate(Routes.CHAT) },

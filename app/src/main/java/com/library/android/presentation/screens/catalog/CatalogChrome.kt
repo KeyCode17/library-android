@@ -74,17 +74,20 @@ fun StacksAppBar(
             fontSize = 20.sp,
         )
         Spacer(Modifier.weight(1f))
-        Text(
-            text = "For you",
-            color = StacksColors.Pine,
-            fontFamily = StacksType.Body,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
-                .clickable(onClick = onRecommendationsClick)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-        )
+        // "For you" recommendations are only offered to a signed-in member; hidden when anonymous.
+        if (accountInitials != null) {
+            Text(
+                text = "For you",
+                color = StacksColors.Pine,
+                fontFamily = StacksType.Body,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .minimumInteractiveComponentSize() // ≥48dp touch target for a11y
+                    .clickable(onClick = onRecommendationsClick)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+        }
         AccountSlot(accountInitials = accountInitials, onClick = onAccountClick)
     }
 }

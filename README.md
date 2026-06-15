@@ -8,16 +8,17 @@ Native Android client for the Library project (Kotlin + Jetpack Compose).
 
 A Compose app that launches to the **catalog list** (`docs/designs/catalog.html`) and opens a
 **book detail** screen (`docs/designs/catalog-detail.html`), fetching books from the backend's
-`GET /books` and `GET /books/{id}` over REST. A **shelf/row book-finder** filters the list.
-Lending, chat, recommender, etc. arrive in later milestones (see
-`docs/plan/001-implementation-plan-android.md`).
+`GET /books` and `GET /books/{id}` over REST. A **text search** (`GET /books?q=`) and a
+**shelf/row book-finder** filter the list (combinable). Lending, chat, recommender, etc. arrive
+in later milestones (see `docs/plan/001-implementation-plan-android.md`).
 
 - **UI:** Jetpack Compose + Material 3
-  - catalog list with Loading / Content / Empty / Error states + a shelf/row finder
-  - book detail with Loading / Content / NotFound (404) / Error states
+  - catalog list with Loading / Content / Empty / Error states + text search + a shelf/row finder
+  - book detail with Loading / Content / NotFound (404) / Error states, with a wired **Borrow**
 - **Networking:** Retrofit + kotlinx.serialization; DTOs (incl. `Error`) mirrored from
   `../library-backend/contract/openapi.yaml` (single source of truth). Base URL is the local
-  gateway `http://10.0.2.2:8080/` (emulator → host loopback). No Room cache yet (fast-follow).
+  gateway `http://10.0.2.2:8080/` (emulator → host loopback). The catalog is **offline-first**:
+  cached in Room and served instantly, then refreshed from `GET /books` and reconciled (ADR 0002).
 - **Device features (QR access card + WiFi):** a QR **access card** encoding a membership
   reference (the `/auth/me` principal id — never a JWT/secret), rendered on a Compose Canvas;
   and **library WiFi provisioning** via `WifiNetworkSuggestion` (API 29+, graceful degradation
@@ -59,7 +60,8 @@ Lending, chat, recommender, etc. arrive in later milestones (see
   - ⚠️ **The lending screen is a clean default and needs a design pass** — no lending design file.
   - The scanner reads an **ISBN**, resolved to a book **server-side** via the catalog finder
     (`GET /books?isbn=`), then borrowed. (Earlier client-side first-page matching was replaced.)
-  - Wiring the catalog-detail **Borrow** button is a follow-up — borrow is via the Borrowed tab.
+  - The catalog-detail **Borrow** button is wired (`POST /loans`): it reflects availability and
+    handles 401 (prompt sign-in) and 409 (already on loan); borrow is also on the Borrowed tab.
 - **Auth (IAM):** register / login / logout over REST; JWT in `EncryptedSharedPreferences`
   attached as `Authorization: Bearer` via an OkHttp interceptor; a gated Profile screen reads
   `/auth/me`. Catalog stays **public**.
@@ -82,7 +84,7 @@ Lending, chat, recommender, etc. arrive in later milestones (see
 - **Navigation:** Navigation Compose — catalog list → `book/{id}` detail; catalog → profile
   (→ login / register)
 - **DI:** Hilt (network + repository + storage modules)
-- **Local data:** Room (deps wired; no entities yet)
+- **Local data:** Room — offline catalog cache (`BookEntity` / `BookDao` / `CatalogDatabase`, ADR 0002)
 - **Architecture:** MVVM / Unidirectional Data Flow (see `docs/adr/0004`) — per-screen
   `StateFlow<UiState>`; stateful `XxxScreen` + stateless, previewable `XxxContent`
 - **Toolchain (ADR-0001):** AGP 9.1, Gradle 9.1, JDK 17 toolchain, Kotlin 2.2.10,
